@@ -1,17 +1,21 @@
 class V30_Json_FileHandleDeserializer : V30_Json_Deserializer {
 	protected ref FileHandle m_FileHandle;
-	
+
 	void V30_Json_FileHandleDeserializer(notnull FileHandle fileHandle) {
 		m_FileHandle = fileHandle;
 	};
-	
+
 	FileHandle GetFileHandle() {
 		return m_FileHandle;
 	};
-	
+
+	bool IsOpen() {
+		return m_FileHandle && m_FileHandle.IsOpen();
+	};
+
 	override void Next() {
 		m_Token = null;
-		
+
 		if (m_FileHandle.IsEOF()) {
 			m_Token = new V30_Json_Deserializer_Token_EOF("");
 			return;
@@ -20,12 +24,12 @@ class V30_Json_FileHandleDeserializer : V30_Json_Deserializer {
 			PrintFormat("%1: File handle %2 is not open.", this, m_FileHandle, level: LogLevel.ERROR);
 			return;
 		};
-		
+
 		auto begin = m_FileHandle.GetPos();
-		
+
 		string data;
 		m_FileHandle.Read(data, 1);
-		
+
 		if (data == "n") {
 			m_FileHandle.Read(data, "ull".Length());
 			if (data == "ull") {
@@ -92,13 +96,13 @@ class V30_Json_FileHandleDeserializer : V30_Json_Deserializer {
 		else {
 			m_FileHandle.Seek(begin);
 			m_FileHandle.Read(data, 32);
-			
+
 			int iParsed;
 			data.ToInt(parsed: iParsed);
-			
+
 			int fParsed;
 			data.ToFloat(parsed: fParsed);
-			
+
 			if (fParsed > 0 && fParsed > iParsed) {
 				m_Token = new V30_Json_Deserializer_Token_Float(data.Substring(0, fParsed));
 				m_FileHandle.Seek(begin + fParsed);
@@ -108,13 +112,13 @@ class V30_Json_FileHandleDeserializer : V30_Json_Deserializer {
 				m_FileHandle.Seek(begin + iParsed);
 			};
 		};
-		
+
 		if (!m_Token) {
 			m_FileHandle.Seek(begin);
 			m_Token = new V30_Json_Deserializer_Token_Error("");
 		};
 	};
-	
+
 	protected string Substring(int from) {
 		auto to = m_FileHandle.GetPos();
 		string data;

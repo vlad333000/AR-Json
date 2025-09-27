@@ -1,66 +1,70 @@
 class V30_Json_FileHandleSerializer : V30_Json_Serializer {
 	protected ref FileHandle m_FileHandle;
-	
+
 	protected bool m_bIsFirstObjectValue;
-	
+
 	void V30_Json_FileHandleSerializer(FileHandle fileHandle) {
 		m_FileHandle = fileHandle;
 	};
-	
+
 	FileHandle GetFileHandle() {
 		return m_FileHandle;
 	};
-	
+
+	bool IsOpen() {
+		return m_FileHandle && m_FileHandle.IsOpen();
+	};
+
 	override protected void OnNull() {
 		Write("null");
 	};
-	
+
 	override protected void OnBool(bool value) {
 		Write(value.ToString());
 	};
-	
+
 	override protected void OnInt(int value) {
 		Write(value.ToString());
 	};
-	
+
 	override protected void OnFloat(float value) {
 		Write(value.ToString());
 	};
-	
+
 	override protected void OnString(string value) {
 		WriteString(value);
 	};
-	
+
 	override protected void OnArrayBegin(array<ref V30_Json_Value> value) {
 		Write("[");
 	};
-	
+
 	override protected void OnArrayValue(int index, V30_Json_Value value) {
 		if (index == 0) return;
 		Write(",");
 	};
-	
+
 	override protected void OnArrayEnd(array<ref V30_Json_Value> value) {
 		Write("]");
 	};
-	
+
 	override protected void OnObjectBegin(map<string, ref V30_Json_Value> value) {
 		Write("{");
 		m_bIsFirstObjectValue = true;
 	};
-	
+
 	override protected void OnObjectValue(string key, V30_Json_Value value) {
 		if (!m_bIsFirstObjectValue) Write(",");
 		WriteString(key);
 		Write(":");
 		m_bIsFirstObjectValue = false;
 	};
-	
+
 	override protected void OnObjectEnd(map<string, ref V30_Json_Value> value) {
 		Write("}");
 		m_bIsFirstObjectValue = false;
 	};
-	
+
 	protected void WriteString(string src) {
 		Write("\"");
 		auto n = src.Length();
@@ -110,7 +114,7 @@ class V30_Json_FileHandleSerializer : V30_Json_Serializer {
 					case 0x09:
 						Write("t");
 						break;
-					
+
 					default:
 						Write("u");
 						Write("00");
@@ -123,18 +127,18 @@ class V30_Json_FileHandleSerializer : V30_Json_Serializer {
 		WriteSubstring(src, a, b - a);
 		Write("\"");
 	};
-	
+
 	protected void Write(string src) {
 		if (!m_FileHandle.IsOpen()) {
 			PrintFormat("%1: File handle %2 is not open.", this, m_FileHandle, level: LogLevel.ERROR);
 			return;
 		};
-		
+
 		m_FileHandle.Write(src);
 	};
-	
+
 	protected void WriteSubstring(string src, int from, int count) {
-		// enfusion://ScriptEditor/scripts/Core/generated/Types/string.c;88 
+		// enfusion://ScriptEditor/scripts/Core/generated/Types/string.c;88
 		// (Maximum output string size is limited to 8191 characters)
 		while (count > 0) {
 			int n;
