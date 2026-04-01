@@ -34,6 +34,7 @@ class V30_Json_SerializerAttribute {
 	bool DeserializeObjectRef(notnull V30_Json_Deserializer deserializer, out Managed obj, out string error);
 };
 
+// Helper for `V30_Json_SerializerAttribute`
 class V30_Json_SerializerAttributeHelperT<Class T> {
 	static void SerializeArray(notnull V30_Json_Serializer serializer, notnull Managed arr, notnull V30_Json_SerializerAttribute attribute) {
 		serializer.WriteArrayBegin();
@@ -61,6 +62,7 @@ class V30_Json_SerializerAttributeHelperT<Class T> {
 	};
 };
 
+// Strong reference version of helper for `V30_Json_SerializerAttribute`
 class V30_Json_SerializerAttributeHelperRefT<Managed T> {
 	static void SerializeArray(notnull V30_Json_Serializer serializer, notnull Managed arr, notnull V30_Json_SerializerAttribute attribute) {
 		serializer.WriteArrayBegin();
