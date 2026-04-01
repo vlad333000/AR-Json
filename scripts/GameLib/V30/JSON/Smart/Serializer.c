@@ -1,0 +1,364 @@
+// Smart serializer for easier serialization.
+class V30_Json_SmartSerializer : Managed {
+    // Reference to raw serializer.
+	protected V30_Json_Serializer serializer;
+
+	// State of serialization.
+	protected ref array<V30_Json_ESerializerState> state;
+
+	void V30_Json_SmartSerializer(notnull V30_Json_Serializer serializer) {
+		this.serializer = serializer;
+		this.state = new array<V30_Json_ESerializerState>();
+		PushState(V30_Json_ESerializerState.ROOT);
+		PushState(V30_Json_ESerializerState.VALUE);
+	};
+
+	void ~V30_Json_SmartSerializer() {
+		#ifdef ENABLE_DIAG
+		if (!IsEnded())
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] ~V30_Json_SmartSerializer(): serialization is not finished."));
+		#endif
+	};
+
+    V30_Json_Serializer GetSerializer() {
+        return this.serializer;
+    };
+
+	// Put `null` to serializer.
+	void PutNull() {
+		TryPutComma();
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.VALUE))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.VALUE
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteNull();
+		EndValue();
+	};
+
+	// Put boolean value to serializer.
+	void PutBool(bool value) {
+		TryPutComma();
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.VALUE))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutBool(bool): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.VALUE
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteBool(value);
+		EndValue();
+	};
+
+	// Put integer value to serializer.
+	void PutInt(int value) {
+		TryPutComma();
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.VALUE))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutInt(int): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.VALUE
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteInt(value);
+		EndValue();
+	};
+
+	// Put float value to serializer.
+	void PutFloat(float value) {
+		TryPutComma();
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.VALUE))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutFloat(float): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.VALUE
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteFloat(value);
+		EndValue();
+	};
+
+	// Put string value to serializer.
+	void PutString(string value) {
+		TryPutComma();
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.VALUE))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutString(string): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.VALUE
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteString(value);
+		EndValue();
+	};
+
+	// Begins serialization of array.
+	void BeginArray() {
+		TryPutComma();
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.VALUE))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] BeginArray(): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.VALUE
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteArrayBegin();
+		PushState(V30_Json_ESerializerState.ARRAY);
+		PushState(V30_Json_ESerializerState.VALUE);
+	};
+
+	// Ends serialization of array.
+	void EndArray() {
+		PopState(V30_Json_ESerializerState.COMMA);
+		PopState(V30_Json_ESerializerState.VALUE);
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.ARRAY))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] EndArray(): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.ARRAY), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.ARRAY
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteArrayEnd();
+		EndValue();
+	};
+
+	// Begins serialization of object.
+	void BeginObject() {
+		TryPutComma();
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.VALUE))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] BeginObject(): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.VALUE
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteObjectBegin();
+		PushState(V30_Json_ESerializerState.OBJECT);
+		PushState(V30_Json_ESerializerState.KEY);
+	};
+
+	// Ends serialization of object.
+	void EndObject() {
+		PopState(V30_Json_ESerializerState.COMMA);
+		PopState(V30_Json_ESerializerState.KEY);
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.OBJECT))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] EndObject(): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.OBJECT), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.OBJECT
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteObjectEnd();
+		EndValue();
+	};
+
+	// Put key for object to serializer.
+	void PutKey(string key) {
+		TryPutComma();
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.KEY))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutKey(string): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.KEY), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.KEY
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteString(key);
+		this.serializer.WriteColon();
+		PushState(V30_Json_ESerializerState.VALUE);
+	};
+
+	// Puts comma to serializer.
+	protected void PutComma() {
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.COMMA))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutComma(): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.COMMA), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.COMMA
+		#endif
+		#ifdef ENABLE_DIAG
+		if (!this.serializer)
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
+		#endif
+		this.serializer.WriteComma();
+		if (IsArray())
+			PushState(V30_Json_ESerializerState.VALUE);
+		else if (IsObject())
+			PushState(V30_Json_ESerializerState.KEY);
+	};
+
+	// Puts comma to serializer if serializer is expected comma.
+	protected bool TryPutComma() {
+		if (GetState() != V30_Json_ESerializerState.COMMA)
+			return false;
+		PutComma();
+		return true;
+	};
+
+	void PutClass(Class instance) {
+		TryPutComma();
+		if (!instance) {
+			PutNull();
+			return;
+		};
+	};
+
+	// Returns `true` if serializing root value.
+	bool IsRoot() {
+		return GetContainerState() == V30_Json_ESerializerState.ROOT;
+	};
+
+	// Returns `true` if serializing array.
+	bool IsArray() {
+		return GetContainerState() == V30_Json_ESerializerState.ARRAY;
+	};
+
+	// Returns `true` if serializing object.
+	bool IsObject() {
+		return GetContainerState() == V30_Json_ESerializerState.OBJECT;
+	};
+
+	// Returns `true` if `IsArray()` or `IsObject()` returns `true`.
+	bool IsContainer() {
+		return IsArray() || IsObject();
+	};
+
+	// Returns `true` if expecting comma.
+	protected bool IsComma() {
+		return GetState() == V30_Json_ESerializerState.COMMA;
+	};
+
+	// Returns `true` if expecting object's entry key (Next call must be `PutKey`).
+	bool IsKey() {
+		return GetState() == V30_Json_ESerializerState.KEY;
+	};
+
+	// Returns `true` if expecting any value (Always `true` except when `IsKey` is `true`).
+	bool IsValue() {
+		return GetState() == V30_Json_ESerializerState.VALUE;
+	};
+
+	// Returns `true` if serialization is ended (Root values is putted and last required `End*` call is performed).
+	bool IsEnded() {
+		return GetState() == V30_Json_ESerializerState.ENDED;
+	};
+
+	// Returns current state of serializer.
+	protected V30_Json_ESerializerState GetState() {
+		auto i = this.state.Count() - 1;
+		return this.state.Get(i);
+	};
+
+	// Returns container state (root value, array or object).
+	protected V30_Json_ESerializerState GetContainerState() {
+		auto n = this.state.Count();
+		for (auto i = n - 1; i >= 0; i--) {
+			auto state = this.state.Get(i);
+			switch (state) {
+				case V30_Json_ESerializerState.ROOT:
+				case V30_Json_ESerializerState.ARRAY:
+				case V30_Json_ESerializerState.OBJECT:
+					return state;
+				case V30_Json_ESerializerState.KEY:
+					return V30_Json_ESerializerState.OBJECT;
+			};
+		};
+		#ifdef ENABLE_DIAG
+		Debug.Error("[V30][JSON][Serializer] GetContainerState(): unrechable code reached.");
+		#endif
+		return V30_Json_ESerializerState.UNKNOWN;
+	};
+
+	// Pushes new state of serializer to stack.
+	protected void PushState(V30_Json_ESerializerState state) {
+		this.state.Insert(state);
+	};
+
+	// Pop current state of serializer from stack.
+	protected V30_Json_ESerializerState PopState() {
+		auto i = this.state.Count() - 1;
+		auto state = this.state.Get(i);
+		this.state.RemoveOrdered(i);
+		return state;
+	};
+
+	// Pop current state of serializer from stack only if it's equal to `expected`.
+	protected bool PopState(V30_Json_ESerializerState expected) {
+		auto i = this.state.Count() - 1;
+		auto state = this.state.Get(i);
+		if (state != expected)
+			return false;
+		this.state.RemoveOrdered(i);
+		return true;
+	};
+
+	// Resets state of serializer.
+	protected void ResetState() {
+		#ifdef ENABLE_DIAG
+		if (!IsEnded() && !IsRoot())
+			Debug.Error(string.Format("[V30][Json][Serializer] ResetState(): trying to reset in the middle of serialization."));
+		#endif
+		this.state.Clear();
+		PushState(V30_Json_ESerializerState.ROOT);
+		PushState(V30_Json_ESerializerState.VALUE);
+	};
+
+	// Finishes value, putting ENDED or COMMA state depending on the current state.
+	protected void EndValue() {
+		if (!PopState(V30_Json_ESerializerState.ROOT))
+			PushState(V30_Json_ESerializerState.COMMA);
+		else
+			PushState(V30_Json_ESerializerState.ENDED);
+	};
+};
+
+// Serialization state for V30_Json_Serializer class.
+enum V30_Json_ESerializerState {
+	UNKNOWN,
+	ENDED,
+	ROOT,
+	ARRAY,
+	OBJECT,
+	COMMA,
+	KEY,
+	VALUE
+};
+
+// Returns human readable name for V30_Json_ESerializerState.
+string V30_Json_ESerializerStateName(V30_Json_ESerializerState state) {
+	auto name = typename.EnumToString(V30_Json_ESerializerState, state);
+	if (name.IsEmpty())
+		return string.Format("%1 (<UNKNOWN>)", state);
+	return string.Format("%1 (%2)", state, name);
+};

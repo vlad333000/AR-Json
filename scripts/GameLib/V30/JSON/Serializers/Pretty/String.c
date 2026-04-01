@@ -12,9 +12,4 @@ class V30_Json_StringPrettySerializer : V30_Json_BasicPrettySerializer {
     override protected void Write(string data) {
         this.data += data;
     };
-
-	override void ResetState() {
-		super.ResetState();
-		this.data = "";
-	};
 };
