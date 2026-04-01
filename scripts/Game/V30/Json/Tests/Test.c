@@ -1,5 +1,6 @@
 #ifdef WORKBENCH
 
+[BaseContainerProps(category: "Autotest/V30/JSON")]
 class V30_Json_TestSuite : SCR_AutotestSuiteBase {
 	override ResourceName GetWorldFile() {
 		return SCR_AutotestHelper.WORLD_EMPTY;
@@ -81,3 +82,21 @@ class V30_Json_TestHelperRefT<Managed T> {
 };
 
 #endif // WORKBENCH
+
+#ifdef WORKBENCH
+
+[BaseContainerProps(category: "Autotest/V30/JSON")]
+class V30_JSON_TEST_Suite : SCR_AutotestSuiteBase {
+	override ResourceName GetWorldFile() {
+		return SCR_AutotestHelper.WORLD_EMPTY;
+	};
+};
+
+[Test(suite: "V30_JSON_TEST_Suite")]
+class V30_JSON_TEST_Case : SCR_AutotestCaseBase {
+    void AssertEqual(string result, string expect) {
+        AssertTrue(result == expect, "Result isn't equal to expected:\n\tResult: " + result + "\n\tExpect: " + expect);
+    };
+};
+
+#endif

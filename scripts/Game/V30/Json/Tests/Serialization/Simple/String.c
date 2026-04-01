@@ -1,321 +1,385 @@
 #ifdef WORKBENCH
 
-class V30_Json_SimpleStringSerializationTestSuite : SCR_AutotestSuiteBase {
-	override ResourceName GetWorldFile() {
-		return SCR_AutotestHelper.WORLD_EMPTY;
-	};
+[BaseContainerProps(category: "Autotest/V30/JSON")]
+class V30_JSON_TEST_StringSerializerSuite : V30_JSON_TEST_Suite {};
 
-	static TestResultBase Test(string serialized, string expected) {
-		if (serialized == expected)
-			return SCR_AutotestResult.AsSuccess();
-		else
-			return SCR_AutotestResult.AsFailure("Expected '%1', got '%2'", expected, serialized);
-	};
-
-	static TestResultBase Test(notnull V30_Json_StringSerializer serializer, string expected) {
-		return this.Test(serializer.GetString(), expected);
-	};
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_NullTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteNull();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "null");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_TrueBoolTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteBool(true);
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "true");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_FalseBoolTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteBool(false);
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "false");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_IntTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteInt(42);
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "42");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_FloatTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteFloat(3.14);
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "3.14");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_StringTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteString("Hello, World!");
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "\"Hello, World!\"");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_EmptyArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[]");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_SingleNullArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_NullSerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteNull();
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[null]");
+        AssertEqual(serializer.GetString(), "null");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_SingleTrueBoolArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_TrueBoolSerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteBool(true);
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[true]");
+        AssertEqual(serializer.GetString(), "true");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_SingleFalseBoolArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_FalseBoolSerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteBool(false);
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[false]");
+        AssertEqual(serializer.GetString(), "false");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_SingleIntArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_IntSerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteInt(42);
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[42]");
+        AssertEqual(serializer.GetString(), "42");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_SingleFloatArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_FloatSerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteFloat(3.14);
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[3.14]");
+        AssertEqual(serializer.GetString(), "3.14");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_SingleStringArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_StringSerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteString("Hello, World!");
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[\"Hello, World!\"]");
+        AssertEqual(serializer.GetString(), "\"Hello, World!\"");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_SingleEmptyArrayArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_EmptyArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteArrayBegin();
         serializer.WriteArrayEnd();
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[[]]");
+        AssertEqual(serializer.GetString(), "[]");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_SingleEmptyObjectArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
-        serializer.WriteObjectBegin();
-        serializer.WriteObjectEnd();
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[{}]");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_MultipleNullArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
-        serializer.WriteNull(); serializer.WriteComma();
-        serializer.WriteNull(); serializer.WriteComma();
-        serializer.WriteNull();
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[null,null,null]");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_MultipleBoolArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
-        serializer.WriteBool(true); serializer.WriteComma();
-        serializer.WriteBool(false); serializer.WriteComma();
-        serializer.WriteBool(true);
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[true,false,true]");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_MultipleIntArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
-        serializer.WriteInt(42); serializer.WriteComma();
-        serializer.WriteInt(69); serializer.WriteComma();
-        serializer.WriteInt(1337);
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[42,69,1337]");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_MultipleFloatArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
-        serializer.WriteFloat(3.14); serializer.WriteComma();
-        serializer.WriteFloat(1.41); serializer.WriteComma();
-        serializer.WriteFloat(2.71);
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[3.14,1.41,2.71]");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_MultipleStringArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
-        serializer.WriteString("apple"); serializer.WriteComma();
-        serializer.WriteString("orange"); serializer.WriteComma();
-        serializer.WriteString("banana");
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[\"apple\",\"orange\",\"banana\"]");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_MultipleContainerArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_SingleNullArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteArrayBegin();
-        serializer.WriteArrayEnd(); serializer.WriteComma();
-        serializer.WriteObjectBegin();
-        serializer.WriteObjectEnd(); serializer.WriteComma();
-        serializer.WriteArrayBegin();
+            serializer.WriteNull();
         serializer.WriteArrayEnd();
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[[],{},[]]");
+        AssertEqual(serializer.GetString(), "[null]");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_ComplexArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
-        serializer.WriteNull(); serializer.WriteComma();
-        serializer.WriteBool(true); serializer.WriteComma();
-        serializer.WriteBool(false); serializer.WriteComma();
-        serializer.WriteInt(42); serializer.WriteComma();
-        serializer.WriteFloat(3.14); serializer.WriteComma();
-        serializer.WriteString("Hello, World!"); serializer.WriteComma();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_SingleTrueBoolArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteArrayBegin();
-        serializer.WriteArrayEnd(); serializer.WriteComma();
-        serializer.WriteObjectBegin();
-        serializer.WriteObjectEnd();
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[null,true,false,42,3.14,\"Hello, World!\",[],{}]");
+            serializer.WriteBool(true);
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[true]");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_MultiDimensionalArrayTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteArrayBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_SingleFalseBoolArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteBool(false);
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[false]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_SingleIntArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteInt(42);
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[42]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_SingleFloatArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteFloat(3.14);
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[3.14]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_SingleStringArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteString("Hello, World!");
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[\"Hello, World!\"]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_SingleEmptyArrayArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteArrayBegin();
             serializer.WriteArrayBegin();
-                serializer.WriteNull();
-            serializer.WriteArrayEnd(); serializer.WriteComma();
-            serializer.WriteArrayBegin();
-                serializer.WriteBool(true);
-            serializer.WriteArrayEnd(); serializer.WriteComma();
-            serializer.WriteArrayBegin();
-                serializer.WriteBool(false);
             serializer.WriteArrayEnd();
-        serializer.WriteArrayEnd(); serializer.WriteComma();
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[[]]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_SingleEmptyObjectArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteObjectBegin();
+            serializer.WriteObjectEnd();
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[{}]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_MultipleNullArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteNull(); serializer.WriteComma();
+            serializer.WriteNull(); serializer.WriteComma();
+            serializer.WriteNull();
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[null,null,null]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_MultipleBoolArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteBool(true); serializer.WriteComma();
+            serializer.WriteBool(false); serializer.WriteComma();
+            serializer.WriteBool(true);
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[true,false,true]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_MultipleIntArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteInt(42); serializer.WriteComma();
+            serializer.WriteInt(69); serializer.WriteComma();
+            serializer.WriteInt(1337);
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[42,69,1337]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_MultipleFloatArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteFloat(3.14); serializer.WriteComma();
+            serializer.WriteFloat(1.41); serializer.WriteComma();
+            serializer.WriteFloat(2.71);
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[3.14,1.41,2.71]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_MultipleStringArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteString("apple"); serializer.WriteComma();
+            serializer.WriteString("orange"); serializer.WriteComma();
+            serializer.WriteString("banana");
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[\"apple\",\"orange\",\"banana\"]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_MultipleContainerArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteArrayBegin();
             serializer.WriteArrayBegin();
-                serializer.WriteInt(42);
             serializer.WriteArrayEnd(); serializer.WriteComma();
+            serializer.WriteObjectBegin();
+            serializer.WriteObjectEnd(); serializer.WriteComma();
             serializer.WriteArrayBegin();
-                serializer.WriteFloat(3.14);
-            serializer.WriteArrayEnd(); serializer.WriteComma();
-            serializer.WriteArrayBegin();
-                serializer.WriteString("Hello, World!");
             serializer.WriteArrayEnd();
-        serializer.WriteArrayEnd(); serializer.WriteComma();
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[[],{},[]]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_ComplexArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteArrayBegin();
+            serializer.WriteNull(); serializer.WriteComma();
+            serializer.WriteBool(true); serializer.WriteComma();
+            serializer.WriteBool(false); serializer.WriteComma();
+            serializer.WriteInt(42); serializer.WriteComma();
+            serializer.WriteFloat(3.14); serializer.WriteComma();
+            serializer.WriteString("Hello, World!"); serializer.WriteComma();
+            serializer.WriteArrayBegin();
+            serializer.WriteArrayEnd(); serializer.WriteComma();
+            serializer.WriteObjectBegin();
+            serializer.WriteObjectEnd();
+        serializer.WriteArrayEnd();
+        AssertEqual(serializer.GetString(), "[null,true,false,42,3.14,\"Hello, World!\",[],{}]");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_MultiDimensionalArraySerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
         serializer.WriteArrayBegin();
             serializer.WriteArrayBegin();
                 serializer.WriteArrayBegin();
+                    serializer.WriteNull();
+                serializer.WriteArrayEnd(); serializer.WriteComma();
+                serializer.WriteArrayBegin();
+                    serializer.WriteBool(true);
+                serializer.WriteArrayEnd(); serializer.WriteComma();
+                serializer.WriteArrayBegin();
+                    serializer.WriteBool(false);
                 serializer.WriteArrayEnd();
             serializer.WriteArrayEnd(); serializer.WriteComma();
             serializer.WriteArrayBegin();
-                serializer.WriteObjectBegin();
-                serializer.WriteObjectEnd();
+                serializer.WriteArrayBegin();
+                    serializer.WriteInt(42);
+                serializer.WriteArrayEnd(); serializer.WriteComma();
+                serializer.WriteArrayBegin();
+                    serializer.WriteFloat(3.14);
+                serializer.WriteArrayEnd(); serializer.WriteComma();
+                serializer.WriteArrayBegin();
+                    serializer.WriteString("Hello, World!");
+                serializer.WriteArrayEnd();
+            serializer.WriteArrayEnd(); serializer.WriteComma();
+            serializer.WriteArrayBegin();
+                serializer.WriteArrayBegin();
+                    serializer.WriteArrayBegin();
+                    serializer.WriteArrayEnd();
+                serializer.WriteArrayEnd(); serializer.WriteComma();
+                serializer.WriteArrayBegin();
+                    serializer.WriteObjectBegin();
+                    serializer.WriteObjectEnd();
+                serializer.WriteArrayEnd();
             serializer.WriteArrayEnd();
         serializer.WriteArrayEnd();
-    serializer.WriteArrayEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "[[[null],[true],[false]],[[42],[3.14],[\"Hello, World!\"]],[[[]],[{}]]]");
+        AssertEqual(serializer.GetString(), "[[[null],[true],[false]],[[42],[3.14],[\"Hello, World!\"]],[[[]],[{}]]]");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_EmptyObjectTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteObjectBegin();
-    serializer.WriteObjectEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "{}");
-};
-
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_ComplexObjectTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteObjectBegin();
-        serializer.WriteString("null"); serializer.WriteColon(); serializer.WriteNull(); serializer.WriteComma();
-        serializer.WriteString("true"); serializer.WriteColon(); serializer.WriteBool(true); serializer.WriteComma();
-        serializer.WriteString("false"); serializer.WriteColon(); serializer.WriteBool(false); serializer.WriteComma();
-        serializer.WriteString("int"); serializer.WriteColon(); serializer.WriteInt(42); serializer.WriteComma();
-        serializer.WriteString("float"); serializer.WriteColon(); serializer.WriteFloat(3.14); serializer.WriteComma();
-        serializer.WriteString("string"); serializer.WriteColon(); serializer.WriteString("Hello, World!"); serializer.WriteComma();
-        serializer.WriteString("array"); serializer.WriteColon(); serializer.WriteArrayBegin();
-        serializer.WriteArrayEnd(); serializer.WriteComma();
-        serializer.WriteString("object"); serializer.WriteColon(); serializer.WriteObjectBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_EmptyObjectSerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteObjectBegin();
         serializer.WriteObjectEnd();
-    serializer.WriteObjectEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "{\"null\":null,\"true\":true,\"false\":false,\"int\":42,\"float\":3.14,\"string\":\"Hello, World!\",\"array\":[],\"object\":{}}");
+        AssertEqual(serializer.GetString(), "{}");
+    };
 };
 
-[Test("V30_Json_SimpleStringSerializationTestSuite")]
-TestResultBase V30_Json_SimpleStringSerialization_MultiDimensionalObjectTest() {
-	auto serializer = new V30_Json_StringSerializer();
-    serializer.WriteObjectBegin();
-        serializer.WriteString("a"); serializer.WriteColon(); serializer.WriteObjectBegin();
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_ComplexObjectSerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteObjectBegin();
             serializer.WriteString("null"); serializer.WriteColon(); serializer.WriteNull(); serializer.WriteComma();
             serializer.WriteString("true"); serializer.WriteColon(); serializer.WriteBool(true); serializer.WriteComma();
-            serializer.WriteString("false"); serializer.WriteColon(); serializer.WriteBool(false);
-        serializer.WriteObjectEnd(); serializer.WriteComma();
-        serializer.WriteString("b"); serializer.WriteColon(); serializer.WriteObjectBegin();
+            serializer.WriteString("false"); serializer.WriteColon(); serializer.WriteBool(false); serializer.WriteComma();
             serializer.WriteString("int"); serializer.WriteColon(); serializer.WriteInt(42); serializer.WriteComma();
             serializer.WriteString("float"); serializer.WriteColon(); serializer.WriteFloat(3.14); serializer.WriteComma();
-            serializer.WriteString("string"); serializer.WriteColon(); serializer.WriteString("Hello, World!");
-        serializer.WriteObjectEnd(); serializer.WriteComma();
-        serializer.WriteString("c"); serializer.WriteColon(); serializer.WriteObjectBegin();
+            serializer.WriteString("string"); serializer.WriteColon(); serializer.WriteString("Hello, World!"); serializer.WriteComma();
             serializer.WriteString("array"); serializer.WriteColon(); serializer.WriteArrayBegin();
             serializer.WriteArrayEnd(); serializer.WriteComma();
             serializer.WriteString("object"); serializer.WriteColon(); serializer.WriteObjectBegin();
             serializer.WriteObjectEnd();
         serializer.WriteObjectEnd();
-    serializer.WriteObjectEnd();
-	return V30_Json_SimpleStringSerializationTestSuite.Test(serializer, "{\"a\":{\"null\":null,\"true\":true,\"false\":false},\"b\":{\"int\":42,\"float\":3.14,\"string\":\"Hello, World!\"},\"c\":{\"array\":[],\"object\":{}}}");
+        AssertEqual(serializer.GetString(), "{\"null\":null,\"true\":true,\"false\":false,\"int\":42,\"float\":3.14,\"string\":\"Hello, World!\",\"array\":[],\"object\":{}}");
+    };
+};
+
+[Test("V30_JSON_TEST_StringSerializerSuite")]
+class V30_JSON_TEST_StringSerialization_MultiDimensionalObjectSerialization : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto serializer = new V30_Json_StringSerializer();
+        serializer.WriteObjectBegin();
+            serializer.WriteString("a"); serializer.WriteColon(); serializer.WriteObjectBegin();
+                serializer.WriteString("null"); serializer.WriteColon(); serializer.WriteNull(); serializer.WriteComma();
+                serializer.WriteString("true"); serializer.WriteColon(); serializer.WriteBool(true); serializer.WriteComma();
+                serializer.WriteString("false"); serializer.WriteColon(); serializer.WriteBool(false);
+            serializer.WriteObjectEnd(); serializer.WriteComma();
+            serializer.WriteString("b"); serializer.WriteColon(); serializer.WriteObjectBegin();
+                serializer.WriteString("int"); serializer.WriteColon(); serializer.WriteInt(42); serializer.WriteComma();
+                serializer.WriteString("float"); serializer.WriteColon(); serializer.WriteFloat(3.14); serializer.WriteComma();
+                serializer.WriteString("string"); serializer.WriteColon(); serializer.WriteString("Hello, World!");
+            serializer.WriteObjectEnd(); serializer.WriteComma();
+            serializer.WriteString("c"); serializer.WriteColon(); serializer.WriteObjectBegin();
+                serializer.WriteString("array"); serializer.WriteColon(); serializer.WriteArrayBegin();
+                serializer.WriteArrayEnd(); serializer.WriteComma();
+                serializer.WriteString("object"); serializer.WriteColon(); serializer.WriteObjectBegin();
+                serializer.WriteObjectEnd();
+            serializer.WriteObjectEnd();
+        serializer.WriteObjectEnd();
+        AssertEqual(serializer.GetString(), "{\"a\":{\"null\":null,\"true\":true,\"false\":false},\"b\":{\"int\":42,\"float\":3.14,\"string\":\"Hello, World!\"},\"c\":{\"array\":[],\"object\":{}}}");
+    };
 };
 
 #endif // WORKBENCH
