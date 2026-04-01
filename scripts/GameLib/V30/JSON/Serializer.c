@@ -23,4 +23,22 @@ class V30_Json_Serializer : Managed {
 	void WriteComma();
 
 	void WriteColon();
+
+	void WriteClass(Class instance) {
+		if (!instance) {
+			WriteNull();
+			return;
+		};
+		auto type = instance.Type();
+		WriteClass(instance, type);
+	};
+
+	void WriteClass(Class instance, typename type) {
+		auto serializerAttribute = V30_Json_SerializerHelper.GetSerializerAttribute(type);
+		#ifdef ENABLE_DIAG
+		if (!serializerAttribute)
+			Debug.Error(string.Format("[V30][JSON][Serializer] WriteClass(Class, typename): No serializer for type `%1`.", type));
+		#endif
+		serializerAttribute.Serialize(this, instance);
+	};
 };

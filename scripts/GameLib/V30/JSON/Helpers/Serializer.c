@@ -351,7 +351,7 @@ class V30_Json_SerializerHelper {
 		return subTypeString.ToType();
 	};
 
-	protected static V30_Json_SerializerAttribute GetSerializerAttribute(typename type) {
+	static V30_Json_SerializerAttribute GetSerializerAttribute(typename type) {
 		auto attributes = new array<Class>();
 		type.GetAttributes(attributes);
 		foreach (auto attribute : attributes)
