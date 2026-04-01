@@ -1,6 +1,6 @@
 // Describes serialization for your class.
 class V30_Json_SerializerAttribute {
-	// Cast `instance` to your type and call methods on `serializer` (Like `PutInt`, `PutString`, `BeginArray`, `BeginObject` and etc.).
+	// Cast `instance` to your type and call methods on `serializer` (Like `WriteInt`, `WriteString`, `WriteArrayBegin`, `WriteArrayEnd` and etc.).
 	void Serialize(notnull V30_Json_Serializer serializer, Class instance);
 
 	// Cast `arr` to `array<T>` where `T` is your type and call `Serialize` method for each element in this array.
