@@ -1,22 +1,22 @@
 class V30_Json_BasicSerializer : V30_Json_Serializer {
-	override void WriteNull() {
-		Write("null");
+	override void SerializeNull() {
+		SerializeRaw("null");
 	};
 
-	override void WriteBool(bool value) {
-		Write(value.ToString(numerical: false));
+	override void SerializeBool(bool value) {
+		SerializeRaw(value.ToString(numerical: false));
 	};
 
-	override void WriteInt(int value) {
-		Write(value.ToString());
+	override void SerializeInt(int value) {
+		SerializeRaw(value.ToString());
 	};
 
-	override void WriteFloat(float value) {
-		Write(value.ToString());
+	override void SerializeFloat(float value) {
+		SerializeRaw(value.ToString());
 	};
 
-	override void WriteString(string value) {
-		Write("\"");
+	override void SerializeString(string value) {
+		SerializeRaw("\"");
 		auto n = value.Length();
 		auto from = 0;
 		for (int i = 0; i < n; i++) {
@@ -24,53 +24,53 @@ class V30_Json_BasicSerializer : V30_Json_Serializer {
 			switch (c) {
 				// "
 				case 0x22:
-					WriteSubstring(value, from, i - from);
+					SerializeSubstring(value, from, i - from);
 					from = i + 1;
-					Write("\\"); // Combining escape sequence results in parser error
-					Write("\""); // Combining escape sequence results in parser error
+					SerializeRaw("\\"); // Combining escape sequence results in parser error
+					SerializeRaw("\""); // Combining escape sequence results in parser error
 					break;
 				// \
 				case 0x5C:
-					WriteSubstring(value, from, i - from);
+					SerializeSubstring(value, from, i - from);
 					from = i + 1;
-					Write("\\"); // Combining escape sequence results in parser error
-					Write("\\"); // Combining escape sequence results in parser error
+					SerializeRaw("\\"); // Combining escape sequence results in parser error
+					SerializeRaw("\\"); // Combining escape sequence results in parser error
 					break;
 				// // /
 				// case 0x2F:
-				// 	WriteSubstring(value, from, i - from);
+				// 	SerializeSubstring(value, from, i - from);
 				// 	from = i + 1;
-				// 	Write("\\/");
+				// 	SerializeRaw("\\/");
 				// 	break;
 				// BS
 				case 0x08:
-					WriteSubstring(value, from, i - from);
+					SerializeSubstring(value, from, i - from);
 					from = i + 1;
-					Write("\\b");
+					SerializeRaw("\\b");
 					break;
 				// FF
 				case 0x0C:
-					WriteSubstring(value, from, i - from);
+					SerializeSubstring(value, from, i - from);
 					from = i + 1;
-					Write("\\f");
+					SerializeRaw("\\f");
 					break;
 				// LF
 				case 0x0A:
-					WriteSubstring(value, from, i - from);
+					SerializeSubstring(value, from, i - from);
 					from = i + 1;
-					Write("\\n");
+					SerializeRaw("\\n");
 					break;
 				// CR
 				case 0x0D:
-					WriteSubstring(value, from, i - from);
+					SerializeSubstring(value, from, i - from);
 					from = i + 1;
-					Write("\\r");
+					SerializeRaw("\\r");
 					break;
 				// HT
 				case 0x09:
-					WriteSubstring(value, from, i - from);
+					SerializeSubstring(value, from, i - from);
 					from = i + 1;
-					Write("\\t");
+					SerializeRaw("\\t");
 					break;
 				// 0x00..0x1F
 				case 0x00:
@@ -105,43 +105,43 @@ class V30_Json_BasicSerializer : V30_Json_Serializer {
 				case 0x1D:
 				case 0x1E:
 				case 0x1F:
-					WriteSubstring(value, from, i - from);
+					SerializeSubstring(value, from, i - from);
 					from = i + 1;
-                    Write(c.ToString(len: 4, hex: true, prefix: "\\u"));
+                    SerializeRaw(c.ToString(len: 4, hex: true, prefix: "\\u"));
 					break;
 			};
 		};
-		WriteSubstring(value, from, n - from);
-		Write("\"");
+		SerializeSubstring(value, from, n - from);
+		SerializeRaw("\"");
 	};
 
-	override void WriteArrayBegin() {
-		Write("[");
+	override void SerializeArrayBegin() {
+		SerializeRaw("[");
 	};
 
-	override void WriteArrayEnd() {
-		Write("]");
+	override void SerializeArrayEnd() {
+		SerializeRaw("]");
 	};
 
-	override void WriteObjectBegin() {
-		Write("{");
+	override void SerializeObjectBegin() {
+		SerializeRaw("{");
 	};
 
-	override void WriteObjectEnd() {
-		Write("}");
+	override void SerializeObjectEnd() {
+		SerializeRaw("}");
 	};
 
-	override void WriteComma() {
-		Write(",");
+	override void SerializeComma() {
+		SerializeRaw(",");
 	};
 
-	override void WriteColon() {
-		Write(":");
+	override void SerializeColon() {
+		SerializeRaw(":");
 	};
 
-    protected void Write(string data);
+    protected void SerializeRaw(string data);
 
-	protected void WriteSubstring(string src, int from, int count) {
+	protected void SerializeSubstring(string src, int from, int count) {
 		// enfusion://ScriptEditor/scripts/Core/generated/Types/string.c;88
 		// (Maximum output of string.Substring is limited to 8191 characters)
 		auto to = from + count;
@@ -151,7 +151,7 @@ class V30_Json_BasicSerializer : V30_Json_Serializer {
 				str = src.Substring(i, to - i);
 			else
 				str = src.Substring(i, 8192);
-			Write(str);
+			SerializeRaw(str);
 		};
 	};
 };

@@ -13,12 +13,12 @@ class V30_Json_FileHandleSerializer : V30_Json_BasicSerializer {
         this.fileHandle = fileHandle;
     };
 
-    override protected void Write(string data) {
+    override protected void SerializeRaw(string data) {
         #ifdef ENABLE_DIAG
 		if (!this.fileHandle)
-            Debug.Error(string.Format("[V30][JSON][FileHandleSerializer] Write(string): File handle is null."));
+            Debug.Error(string.Format("[V30][JSON][FileHandleSerializer] SerializeRaw(string): File handle is null."));
 		if (!this.fileHandle.IsOpen())
-            Debug.Error(string.Format("[V30][JSON][FileHandleSerializer] Write(string): File handle is closed."));
+            Debug.Error(string.Format("[V30][JSON][FileHandleSerializer] SerializeRaw(string): File handle is closed."));
         #endif
         this.fileHandle.Write(data);
     };

@@ -9,7 +9,7 @@ class V30_Json_StringPrettySerializer : V30_Json_BasicPrettySerializer {
 		return this.data;
 	};
 
-    override protected void Write(string data) {
+    override protected void SerializeRaw(string data) {
         this.data += data;
     };
 };

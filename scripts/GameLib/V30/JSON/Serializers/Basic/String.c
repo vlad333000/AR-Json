@@ -13,7 +13,7 @@ class V30_Json_StringSerializer : V30_Json_BasicSerializer {
 		this.data = "";
 	};
 
-    override protected void Write(string data) {
+    override protected void SerializeRaw(string data) {
         this.data += data;
     };
 };

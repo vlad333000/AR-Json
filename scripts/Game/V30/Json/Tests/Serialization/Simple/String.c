@@ -8,7 +8,7 @@ class V30_JSON_TEST_StringSerialization_NullSerialization : V30_JSON_TEST_Case {
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteNull();
+        serializer.SerializeNull();
         AssertEqual(serializer.GetString(), "null");
     };
 };
@@ -18,7 +18,7 @@ class V30_JSON_TEST_StringSerialization_TrueBoolSerialization : V30_JSON_TEST_Ca
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteBool(true);
+        serializer.SerializeBool(true);
         AssertEqual(serializer.GetString(), "true");
     };
 };
@@ -28,7 +28,7 @@ class V30_JSON_TEST_StringSerialization_FalseBoolSerialization : V30_JSON_TEST_C
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteBool(false);
+        serializer.SerializeBool(false);
         AssertEqual(serializer.GetString(), "false");
     };
 };
@@ -38,7 +38,7 @@ class V30_JSON_TEST_StringSerialization_IntSerialization : V30_JSON_TEST_Case {
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteInt(42);
+        serializer.SerializeInt(42);
         AssertEqual(serializer.GetString(), "42");
     };
 };
@@ -48,7 +48,7 @@ class V30_JSON_TEST_StringSerialization_FloatSerialization : V30_JSON_TEST_Case 
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteFloat(3.14);
+        serializer.SerializeFloat(3.14);
         AssertEqual(serializer.GetString(), "3.14");
     };
 };
@@ -58,7 +58,7 @@ class V30_JSON_TEST_StringSerialization_StringSerialization : V30_JSON_TEST_Case
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteString("Hello, World!");
+        serializer.SerializeString("Hello, World!");
         AssertEqual(serializer.GetString(), "\"Hello, World!\"");
     };
 };
@@ -68,8 +68,8 @@ class V30_JSON_TEST_StringSerialization_EmptyArraySerialization : V30_JSON_TEST_
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[]");
     };
 };
@@ -79,9 +79,9 @@ class V30_JSON_TEST_StringSerialization_SingleNullArraySerialization : V30_JSON_
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteNull();
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeNull();
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[null]");
     };
 };
@@ -91,9 +91,9 @@ class V30_JSON_TEST_StringSerialization_SingleTrueBoolArraySerialization : V30_J
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteBool(true);
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeBool(true);
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[true]");
     };
 };
@@ -103,9 +103,9 @@ class V30_JSON_TEST_StringSerialization_SingleFalseBoolArraySerialization : V30_
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteBool(false);
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeBool(false);
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[false]");
     };
 };
@@ -115,9 +115,9 @@ class V30_JSON_TEST_StringSerialization_SingleIntArraySerialization : V30_JSON_T
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteInt(42);
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeInt(42);
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[42]");
     };
 };
@@ -127,9 +127,9 @@ class V30_JSON_TEST_StringSerialization_SingleFloatArraySerialization : V30_JSON
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteFloat(3.14);
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeFloat(3.14);
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[3.14]");
     };
 };
@@ -139,9 +139,9 @@ class V30_JSON_TEST_StringSerialization_SingleStringArraySerialization : V30_JSO
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteString("Hello, World!");
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeString("Hello, World!");
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[\"Hello, World!\"]");
     };
 };
@@ -151,10 +151,10 @@ class V30_JSON_TEST_StringSerialization_SingleEmptyArrayArraySerialization : V30
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteArrayBegin();
-            serializer.WriteArrayEnd();
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeArrayBegin();
+            serializer.SerializeArrayEnd();
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[[]]");
     };
 };
@@ -164,10 +164,10 @@ class V30_JSON_TEST_StringSerialization_SingleEmptyObjectArraySerialization : V3
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteObjectBegin();
-            serializer.WriteObjectEnd();
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeObjectBegin();
+            serializer.SerializeObjectEnd();
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[{}]");
     };
 };
@@ -177,11 +177,11 @@ class V30_JSON_TEST_StringSerialization_MultipleNullArraySerialization : V30_JSO
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteNull(); serializer.WriteComma();
-            serializer.WriteNull(); serializer.WriteComma();
-            serializer.WriteNull();
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeNull(); serializer.SerializeComma();
+            serializer.SerializeNull(); serializer.SerializeComma();
+            serializer.SerializeNull();
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[null,null,null]");
     };
 };
@@ -191,11 +191,11 @@ class V30_JSON_TEST_StringSerialization_MultipleBoolArraySerialization : V30_JSO
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteBool(true); serializer.WriteComma();
-            serializer.WriteBool(false); serializer.WriteComma();
-            serializer.WriteBool(true);
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeBool(true); serializer.SerializeComma();
+            serializer.SerializeBool(false); serializer.SerializeComma();
+            serializer.SerializeBool(true);
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[true,false,true]");
     };
 };
@@ -205,11 +205,11 @@ class V30_JSON_TEST_StringSerialization_MultipleIntArraySerialization : V30_JSON
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteInt(42); serializer.WriteComma();
-            serializer.WriteInt(69); serializer.WriteComma();
-            serializer.WriteInt(1337);
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeInt(42); serializer.SerializeComma();
+            serializer.SerializeInt(69); serializer.SerializeComma();
+            serializer.SerializeInt(1337);
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[42,69,1337]");
     };
 };
@@ -219,11 +219,11 @@ class V30_JSON_TEST_StringSerialization_MultipleFloatArraySerialization : V30_JS
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteFloat(3.14); serializer.WriteComma();
-            serializer.WriteFloat(1.41); serializer.WriteComma();
-            serializer.WriteFloat(2.71);
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeFloat(3.14); serializer.SerializeComma();
+            serializer.SerializeFloat(1.41); serializer.SerializeComma();
+            serializer.SerializeFloat(2.71);
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[3.14,1.41,2.71]");
     };
 };
@@ -233,11 +233,11 @@ class V30_JSON_TEST_StringSerialization_MultipleStringArraySerialization : V30_J
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteString("apple"); serializer.WriteComma();
-            serializer.WriteString("orange"); serializer.WriteComma();
-            serializer.WriteString("banana");
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeString("apple"); serializer.SerializeComma();
+            serializer.SerializeString("orange"); serializer.SerializeComma();
+            serializer.SerializeString("banana");
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[\"apple\",\"orange\",\"banana\"]");
     };
 };
@@ -247,14 +247,14 @@ class V30_JSON_TEST_StringSerialization_MultipleContainerArraySerialization : V3
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteArrayBegin();
-            serializer.WriteArrayEnd(); serializer.WriteComma();
-            serializer.WriteObjectBegin();
-            serializer.WriteObjectEnd(); serializer.WriteComma();
-            serializer.WriteArrayBegin();
-            serializer.WriteArrayEnd();
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeArrayBegin();
+            serializer.SerializeArrayEnd(); serializer.SerializeComma();
+            serializer.SerializeObjectBegin();
+            serializer.SerializeObjectEnd(); serializer.SerializeComma();
+            serializer.SerializeArrayBegin();
+            serializer.SerializeArrayEnd();
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[[],{},[]]");
     };
 };
@@ -264,18 +264,18 @@ class V30_JSON_TEST_StringSerialization_ComplexArraySerialization : V30_JSON_TES
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteNull(); serializer.WriteComma();
-            serializer.WriteBool(true); serializer.WriteComma();
-            serializer.WriteBool(false); serializer.WriteComma();
-            serializer.WriteInt(42); serializer.WriteComma();
-            serializer.WriteFloat(3.14); serializer.WriteComma();
-            serializer.WriteString("Hello, World!"); serializer.WriteComma();
-            serializer.WriteArrayBegin();
-            serializer.WriteArrayEnd(); serializer.WriteComma();
-            serializer.WriteObjectBegin();
-            serializer.WriteObjectEnd();
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeNull(); serializer.SerializeComma();
+            serializer.SerializeBool(true); serializer.SerializeComma();
+            serializer.SerializeBool(false); serializer.SerializeComma();
+            serializer.SerializeInt(42); serializer.SerializeComma();
+            serializer.SerializeFloat(3.14); serializer.SerializeComma();
+            serializer.SerializeString("Hello, World!"); serializer.SerializeComma();
+            serializer.SerializeArrayBegin();
+            serializer.SerializeArrayEnd(); serializer.SerializeComma();
+            serializer.SerializeObjectBegin();
+            serializer.SerializeObjectEnd();
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[null,true,false,42,3.14,\"Hello, World!\",[],{}]");
     };
 };
@@ -285,40 +285,40 @@ class V30_JSON_TEST_StringSerialization_MultiDimensionalArraySerialization : V30
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteArrayBegin();
-            serializer.WriteArrayBegin();
-                serializer.WriteArrayBegin();
-                    serializer.WriteNull();
-                serializer.WriteArrayEnd(); serializer.WriteComma();
-                serializer.WriteArrayBegin();
-                    serializer.WriteBool(true);
-                serializer.WriteArrayEnd(); serializer.WriteComma();
-                serializer.WriteArrayBegin();
-                    serializer.WriteBool(false);
-                serializer.WriteArrayEnd();
-            serializer.WriteArrayEnd(); serializer.WriteComma();
-            serializer.WriteArrayBegin();
-                serializer.WriteArrayBegin();
-                    serializer.WriteInt(42);
-                serializer.WriteArrayEnd(); serializer.WriteComma();
-                serializer.WriteArrayBegin();
-                    serializer.WriteFloat(3.14);
-                serializer.WriteArrayEnd(); serializer.WriteComma();
-                serializer.WriteArrayBegin();
-                    serializer.WriteString("Hello, World!");
-                serializer.WriteArrayEnd();
-            serializer.WriteArrayEnd(); serializer.WriteComma();
-            serializer.WriteArrayBegin();
-                serializer.WriteArrayBegin();
-                    serializer.WriteArrayBegin();
-                    serializer.WriteArrayEnd();
-                serializer.WriteArrayEnd(); serializer.WriteComma();
-                serializer.WriteArrayBegin();
-                    serializer.WriteObjectBegin();
-                    serializer.WriteObjectEnd();
-                serializer.WriteArrayEnd();
-            serializer.WriteArrayEnd();
-        serializer.WriteArrayEnd();
+        serializer.SerializeArrayBegin();
+            serializer.SerializeArrayBegin();
+                serializer.SerializeArrayBegin();
+                    serializer.SerializeNull();
+                serializer.SerializeArrayEnd(); serializer.SerializeComma();
+                serializer.SerializeArrayBegin();
+                    serializer.SerializeBool(true);
+                serializer.SerializeArrayEnd(); serializer.SerializeComma();
+                serializer.SerializeArrayBegin();
+                    serializer.SerializeBool(false);
+                serializer.SerializeArrayEnd();
+            serializer.SerializeArrayEnd(); serializer.SerializeComma();
+            serializer.SerializeArrayBegin();
+                serializer.SerializeArrayBegin();
+                    serializer.SerializeInt(42);
+                serializer.SerializeArrayEnd(); serializer.SerializeComma();
+                serializer.SerializeArrayBegin();
+                    serializer.SerializeFloat(3.14);
+                serializer.SerializeArrayEnd(); serializer.SerializeComma();
+                serializer.SerializeArrayBegin();
+                    serializer.SerializeString("Hello, World!");
+                serializer.SerializeArrayEnd();
+            serializer.SerializeArrayEnd(); serializer.SerializeComma();
+            serializer.SerializeArrayBegin();
+                serializer.SerializeArrayBegin();
+                    serializer.SerializeArrayBegin();
+                    serializer.SerializeArrayEnd();
+                serializer.SerializeArrayEnd(); serializer.SerializeComma();
+                serializer.SerializeArrayBegin();
+                    serializer.SerializeObjectBegin();
+                    serializer.SerializeObjectEnd();
+                serializer.SerializeArrayEnd();
+            serializer.SerializeArrayEnd();
+        serializer.SerializeArrayEnd();
         AssertEqual(serializer.GetString(), "[[[null],[true],[false]],[[42],[3.14],[\"Hello, World!\"]],[[[]],[{}]]]");
     };
 };
@@ -328,8 +328,8 @@ class V30_JSON_TEST_StringSerialization_EmptyObjectSerialization : V30_JSON_TEST
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteObjectBegin();
-        serializer.WriteObjectEnd();
+        serializer.SerializeObjectBegin();
+        serializer.SerializeObjectEnd();
         AssertEqual(serializer.GetString(), "{}");
     };
 };
@@ -339,18 +339,18 @@ class V30_JSON_TEST_StringSerialization_ComplexObjectSerialization : V30_JSON_TE
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteObjectBegin();
-            serializer.WriteString("null"); serializer.WriteColon(); serializer.WriteNull(); serializer.WriteComma();
-            serializer.WriteString("true"); serializer.WriteColon(); serializer.WriteBool(true); serializer.WriteComma();
-            serializer.WriteString("false"); serializer.WriteColon(); serializer.WriteBool(false); serializer.WriteComma();
-            serializer.WriteString("int"); serializer.WriteColon(); serializer.WriteInt(42); serializer.WriteComma();
-            serializer.WriteString("float"); serializer.WriteColon(); serializer.WriteFloat(3.14); serializer.WriteComma();
-            serializer.WriteString("string"); serializer.WriteColon(); serializer.WriteString("Hello, World!"); serializer.WriteComma();
-            serializer.WriteString("array"); serializer.WriteColon(); serializer.WriteArrayBegin();
-            serializer.WriteArrayEnd(); serializer.WriteComma();
-            serializer.WriteString("object"); serializer.WriteColon(); serializer.WriteObjectBegin();
-            serializer.WriteObjectEnd();
-        serializer.WriteObjectEnd();
+        serializer.SerializeObjectBegin();
+            serializer.SerializeString("null"); serializer.SerializeColon(); serializer.SerializeNull(); serializer.SerializeComma();
+            serializer.SerializeString("true"); serializer.SerializeColon(); serializer.SerializeBool(true); serializer.SerializeComma();
+            serializer.SerializeString("false"); serializer.SerializeColon(); serializer.SerializeBool(false); serializer.SerializeComma();
+            serializer.SerializeString("int"); serializer.SerializeColon(); serializer.SerializeInt(42); serializer.SerializeComma();
+            serializer.SerializeString("float"); serializer.SerializeColon(); serializer.SerializeFloat(3.14); serializer.SerializeComma();
+            serializer.SerializeString("string"); serializer.SerializeColon(); serializer.SerializeString("Hello, World!"); serializer.SerializeComma();
+            serializer.SerializeString("array"); serializer.SerializeColon(); serializer.SerializeArrayBegin();
+            serializer.SerializeArrayEnd(); serializer.SerializeComma();
+            serializer.SerializeString("object"); serializer.SerializeColon(); serializer.SerializeObjectBegin();
+            serializer.SerializeObjectEnd();
+        serializer.SerializeObjectEnd();
         AssertEqual(serializer.GetString(), "{\"null\":null,\"true\":true,\"false\":false,\"int\":42,\"float\":3.14,\"string\":\"Hello, World!\",\"array\":[],\"object\":{}}");
     };
 };
@@ -360,24 +360,24 @@ class V30_JSON_TEST_StringSerialization_MultiDimensionalObjectSerialization : V3
     [Step(EStage.Main)]
     void Execute() {
         auto serializer = new V30_Json_StringSerializer();
-        serializer.WriteObjectBegin();
-            serializer.WriteString("a"); serializer.WriteColon(); serializer.WriteObjectBegin();
-                serializer.WriteString("null"); serializer.WriteColon(); serializer.WriteNull(); serializer.WriteComma();
-                serializer.WriteString("true"); serializer.WriteColon(); serializer.WriteBool(true); serializer.WriteComma();
-                serializer.WriteString("false"); serializer.WriteColon(); serializer.WriteBool(false);
-            serializer.WriteObjectEnd(); serializer.WriteComma();
-            serializer.WriteString("b"); serializer.WriteColon(); serializer.WriteObjectBegin();
-                serializer.WriteString("int"); serializer.WriteColon(); serializer.WriteInt(42); serializer.WriteComma();
-                serializer.WriteString("float"); serializer.WriteColon(); serializer.WriteFloat(3.14); serializer.WriteComma();
-                serializer.WriteString("string"); serializer.WriteColon(); serializer.WriteString("Hello, World!");
-            serializer.WriteObjectEnd(); serializer.WriteComma();
-            serializer.WriteString("c"); serializer.WriteColon(); serializer.WriteObjectBegin();
-                serializer.WriteString("array"); serializer.WriteColon(); serializer.WriteArrayBegin();
-                serializer.WriteArrayEnd(); serializer.WriteComma();
-                serializer.WriteString("object"); serializer.WriteColon(); serializer.WriteObjectBegin();
-                serializer.WriteObjectEnd();
-            serializer.WriteObjectEnd();
-        serializer.WriteObjectEnd();
+        serializer.SerializeObjectBegin();
+            serializer.SerializeString("a"); serializer.SerializeColon(); serializer.SerializeObjectBegin();
+                serializer.SerializeString("null"); serializer.SerializeColon(); serializer.SerializeNull(); serializer.SerializeComma();
+                serializer.SerializeString("true"); serializer.SerializeColon(); serializer.SerializeBool(true); serializer.SerializeComma();
+                serializer.SerializeString("false"); serializer.SerializeColon(); serializer.SerializeBool(false);
+            serializer.SerializeObjectEnd(); serializer.SerializeComma();
+            serializer.SerializeString("b"); serializer.SerializeColon(); serializer.SerializeObjectBegin();
+                serializer.SerializeString("int"); serializer.SerializeColon(); serializer.SerializeInt(42); serializer.SerializeComma();
+                serializer.SerializeString("float"); serializer.SerializeColon(); serializer.SerializeFloat(3.14); serializer.SerializeComma();
+                serializer.SerializeString("string"); serializer.SerializeColon(); serializer.SerializeString("Hello, World!");
+            serializer.SerializeObjectEnd(); serializer.SerializeComma();
+            serializer.SerializeString("c"); serializer.SerializeColon(); serializer.SerializeObjectBegin();
+                serializer.SerializeString("array"); serializer.SerializeColon(); serializer.SerializeArrayBegin();
+                serializer.SerializeArrayEnd(); serializer.SerializeComma();
+                serializer.SerializeString("object"); serializer.SerializeColon(); serializer.SerializeObjectBegin();
+                serializer.SerializeObjectEnd();
+            serializer.SerializeObjectEnd();
+        serializer.SerializeObjectEnd();
         AssertEqual(serializer.GetString(), "{\"a\":{\"null\":null,\"true\":true,\"false\":false},\"b\":{\"int\":42,\"float\":3.14,\"string\":\"Hello, World!\"},\"c\":{\"array\":[],\"object\":{}}}");
     };
 };

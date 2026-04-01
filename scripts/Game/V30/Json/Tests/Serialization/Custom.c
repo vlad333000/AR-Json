@@ -32,19 +32,19 @@ class V30_JSON_TEST_CustomSerializer_Class {
 };
 
 class V30_JSON_TEST_CustomSerializer_Attribute : V30_Json_SerializerAttribute {
-    override void Serialize(notnull V30_Json_Serializer serializer, Class instance) {
+    override void SerializeClass(notnull V30_Json_Serializer serializer, Class instance) {
         auto instanceReal = V30_JSON_TEST_CustomSerializer_Class.Cast(instance);
         if (!instanceReal) {
-            serializer.WriteNull();
+            serializer.SerializeNull();
 			return;
         };
-        serializer.WriteObjectBegin();
-            serializer.WriteString("n"); serializer.WriteColon(); serializer.WriteNull(); serializer.WriteComma();
-            serializer.WriteString("b"); serializer.WriteColon(); serializer.WriteBool(instanceReal.GetBool()); serializer.WriteComma();
-            serializer.WriteString("i"); serializer.WriteColon(); serializer.WriteInt(instanceReal.GetInt()); serializer.WriteComma();
-            serializer.WriteString("f"); serializer.WriteColon(); serializer.WriteFloat(instanceReal.GetFloat()); serializer.WriteComma();
-            serializer.WriteString("s"); serializer.WriteColon(); serializer.WriteString(instanceReal.GetString());
-        serializer.WriteObjectEnd();
+        serializer.SerializeObjectBegin();
+            serializer.SerializeString("n"); serializer.SerializeColon(); serializer.SerializeNull(); serializer.SerializeComma();
+            serializer.SerializeString("b"); serializer.SerializeColon(); serializer.SerializeBool(instanceReal.GetBool()); serializer.SerializeComma();
+            serializer.SerializeString("i"); serializer.SerializeColon(); serializer.SerializeInt(instanceReal.GetInt()); serializer.SerializeComma();
+            serializer.SerializeString("f"); serializer.SerializeColon(); serializer.SerializeFloat(instanceReal.GetFloat()); serializer.SerializeComma();
+            serializer.SerializeString("s"); serializer.SerializeColon(); serializer.SerializeString(instanceReal.GetString());
+        serializer.SerializeObjectEnd();
     };
 
     override void SerializeArray(notnull V30_Json_Serializer serializer, notnull Managed arr) {
@@ -74,7 +74,7 @@ class V30_JSON_TEST_CustomSerializer_NullSerialization : V30_JSON_TEST_Case {
         auto instance = null;
         auto serializer = new V30_Json_StringSerializer();
         auto instanceSerializer = V30_Json_SerializerHelper.GetSerializerAttribute(V30_JSON_TEST_CustomSerializer_Class);
-        instanceSerializer.Serialize(serializer, instance);
+        instanceSerializer.SerializeClass(serializer, instance);
 	    AssertEqual(serializer.GetString(), "null");
     };
 };
@@ -86,7 +86,7 @@ class V30_JSON_TEST_CustomSerializer_InstanceSerialization : V30_JSON_TEST_Case 
         auto instance = new V30_JSON_TEST_CustomSerializer_Class(true, 42, 3.14, "Hello, World!");
         auto serializer = new V30_Json_StringSerializer();
         auto instanceSerializer = V30_Json_SerializerHelper.GetSerializerAttribute(V30_JSON_TEST_CustomSerializer_Class);
-        instanceSerializer.Serialize(serializer, instance);
+        instanceSerializer.SerializeClass(serializer, instance);
         AssertEqual(serializer.GetString(), "{\"n\":null,\"b\":true,\"i\":42,\"f\":3.14,\"s\":\"Hello, World!\"}");
     };
 };
@@ -104,7 +104,7 @@ class V30_JSON_TEST_CustomSerializer_ArraySerialization : V30_JSON_TEST_Case {
         instances.Insert(new V30_JSON_TEST_CustomSerializer_Class(true, 141, 2.71, "Apple"));
         expecteds.Insert("{\"n\":null,\"b\":true,\"i\":141,\"f\":2.71,\"s\":\"Apple\"}");
         auto serializer = new V30_Json_StringSerializer();
-        V30_Json_SerializerHelper.Write(serializer, instances);
+        V30_Json_SerializerHelper.Serialize(serializer, instances);
         auto expected = V30_Json_TestHelperRefT<V30_JSON_TEST_CustomSerializer_Class>.ExpectedArrayToString(instances, expecteds);
         AssertEqual(serializer.GetString(), expected);
     };
@@ -123,7 +123,7 @@ class V30_JSON_TEST_CustomSerializer_ObjectSerialization : V30_JSON_TEST_Case {
         instances.Insert("Apple", new V30_JSON_TEST_CustomSerializer_Class(true, 141, 2.71, "Apple"));
         expecteds.Insert("Apple", "{\"n\":null,\"b\":true,\"i\":141,\"f\":2.71,\"s\":\"Apple\"}");
         auto serializer = new V30_Json_StringSerializer();
-        V30_Json_SerializerHelper.Write(serializer, instances);
+        V30_Json_SerializerHelper.Serialize(serializer, instances);
         auto expected = V30_Json_TestHelperRefT<V30_JSON_TEST_CustomSerializer_Class>.ExpectedObjectToString(instances, expecteds);
         AssertEqual(serializer.GetString(), expected);
     };

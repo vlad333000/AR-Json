@@ -1,59 +1,35 @@
 // JSON serializer.
 class V30_Json_Serializer : Managed {
-	protected void V30_Json_Serializer();
-
 	// Serialize `null`.
-	void WriteNull();
+	void SerializeNull();
 
 	// Serialize boolean value (`true` or `false`).
-	void WriteBool(bool value);
+	void SerializeBool(bool value);
 
 	// Serialize integer value.
-	void WriteInt(int value);
+	void SerializeInt(int value);
 
 	// Serialize floating point value.
-	void WriteFloat(float value);
+	void SerializeFloat(float value);
 
 	// Serialize string (includes sanitization).
-	void WriteString(string value);
+	void SerializeString(string value);
 
 	// Starts serialization of array.
-	void WriteArrayBegin();
+	void SerializeArrayBegin();
 
 	// Ends serialization of array.
-	void WriteArrayEnd();
+	void SerializeArrayEnd();
 
 	// Starts serialization of object (key-value pairs).
-	void WriteObjectBegin();
+	void SerializeObjectBegin();
 
 	// Ends serialization of object (key-value pairs).
-	void WriteObjectEnd();
+	void SerializeObjectEnd();
 
 	// Serialize separator for array or object elements.
-	void WriteComma();
+	void SerializeComma();
 
 	// Serialize separator for key and value of object element.
-	void WriteColon();
-
-	// Serialize custom class. If `instance` is `null` then serialize `null`.
-	// `instance` must be of type that defines `V30_Json_SerializerAttribute`.
-	void WriteClass(Class instance) {
-		if (!instance) {
-			WriteNull();
-			return;
-		};
-		auto type = instance.Type();
-		WriteClassT(instance, type);
-	};
-
-	// Finds `V30_Json_SerializerAttribute` for `type` and calls it for `instance`.
-	// `type` must define `V30_Json_SerializerAttribute`.
-	void WriteClassT(Class instance, typename type) {
-		auto serializerAttribute = V30_Json_SerializerHelper.GetSerializerAttribute(type);
-		#ifdef ENABLE_DIAG
-		if (!serializerAttribute)
-			Debug.Error(string.Format("[V30][JSON][Serializer] WriteClassT(Class, typename): No serializer for type `%1`.", type));
-		#endif
-		serializerAttribute.Serialize(this, instance);
-	};
+	void SerializeColon();
 };

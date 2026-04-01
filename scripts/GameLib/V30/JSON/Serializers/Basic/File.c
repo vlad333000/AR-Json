@@ -30,10 +30,10 @@ class V30_Json_FileSerializer : V30_Json_BasicSerializer {
         this.fileHandle.Close();
     };
 
-    override protected void Write(string data) {
+    override protected void SerializeRaw(string data) {
         #ifdef ENABLE_DIAG
         if (!IsFileOpen())
-            Debug.Error(string.Format("[V30][JSON][FileSerializer] Write(string): File handle is null or isn't open."));
+            Debug.Error(string.Format("[V30][JSON][FileSerializer] SerializeRaw(string): File handle is null or isn't open."));
         #endif
         this.fileHandle.Write(data);
     };
