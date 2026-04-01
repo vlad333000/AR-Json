@@ -1,5 +1,10 @@
-[TestSuite()]
+#ifdef WORKBENCH
+
 class V30_Json_SmartSerializationTestSuite : SCR_AutotestSuiteBase {
+	override ResourceName GetWorldFile() {
+		return SCR_AutotestHelper.WORLD_EMPTY;
+	};
+
 	static TestResultBase Test(string serialized, string expected) {
 		if (serialized == expected)
 			return SCR_AutotestResult.AsSuccess();
@@ -344,3 +349,5 @@ TestResultBase V30_Json_SmartSerialization_MultiDimensionalObjectTest() {
     smart.EndObject();
 	return V30_Json_SmartSerializationTestSuite.Test(smart, "{\"a\":{\"null\":null,\"true\":true,\"false\":false},\"b\":{\"int\":42,\"float\":3.14,\"string\":\"Hello, World!\"},\"c\":{\"array\":[],\"object\":{}}}");
 };
+
+#endif // WORKBENCH

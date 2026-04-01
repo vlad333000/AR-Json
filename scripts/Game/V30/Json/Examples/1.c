@@ -9,21 +9,23 @@ class V30_Json_Example1_Foo : Managed {
 	};
 };
 
-class V30_Json_Example1_Foo_Attribute : V30_Json_Attribute {
-	override V30_Json_Value Serialize(Class instance) {
-        auto inst = V30_Json_Attribute_HelperRefT<V30_Json_Example1_Foo>.Get(instance);
-        if (!inst)
-            return V30_Json_null();
-        return V30_Json_string(inst.name);
+class V30_Json_Example1_Foo_Attribute : V30_Json_SerializerAttribute {
+	override void Serialize(notnull V30_Json_Serializer serializer, Class instance) {
+        auto inst = V30_Json_Example1_Foo.Cast(instance);
+        if (!inst) {
+			serializer.WriteNull();
+            return;
+		};
+		serializer.WriteString(inst.name);
 	};
 
-	override V30_Json_Value SerializeArray(Managed arr) {
-        return V30_Json_Attribute_HelperRefT<V30_Json_Example1_Foo>.SerializeArray(this, arr);
-	};
+	// override V30_Json_Value SerializeArray(Managed arr) {
+    //     return V30_Json_Attribute_HelperRefT<V30_Json_Example1_Foo>.SerializeArray(this, arr);
+	// };
 
-	override V30_Json_Value SerializeObject(Managed obj) {
-        return V30_Json_Attribute_HelperRefT<V30_Json_Example1_Foo>.SerializeObject(this, obj);
-	};
+	// override V30_Json_Value SerializeObject(Managed obj) {
+    //     return V30_Json_Attribute_HelperRefT<V30_Json_Example1_Foo>.SerializeObject(this, obj);
+	// };
 };
 
 class V30_Json_Example1_Bar : Managed {

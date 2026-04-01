@@ -26,13 +26,7 @@ class V30_Json_SmartSerializer : Managed {
 
 	// Put `null` to serializer.
 	void PutNull() {
-		TryPutComma();
-		#ifdef ENABLE_DIAG
-		if (!PopState(V30_Json_ESerializerState.VALUE))
-			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
-		#else
-		PopState(); // V30_Json_ESerializerState.VALUE
-		#endif
+        BeginValue();
 		#ifdef ENABLE_DIAG
 		if (!this.serializer)
 			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
@@ -43,13 +37,7 @@ class V30_Json_SmartSerializer : Managed {
 
 	// Put boolean value to serializer.
 	void PutBool(bool value) {
-		TryPutComma();
-		#ifdef ENABLE_DIAG
-		if (!PopState(V30_Json_ESerializerState.VALUE))
-			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutBool(bool): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
-		#else
-		PopState(); // V30_Json_ESerializerState.VALUE
-		#endif
+        BeginValue();
 		#ifdef ENABLE_DIAG
 		if (!this.serializer)
 			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
@@ -60,13 +48,7 @@ class V30_Json_SmartSerializer : Managed {
 
 	// Put integer value to serializer.
 	void PutInt(int value) {
-		TryPutComma();
-		#ifdef ENABLE_DIAG
-		if (!PopState(V30_Json_ESerializerState.VALUE))
-			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutInt(int): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
-		#else
-		PopState(); // V30_Json_ESerializerState.VALUE
-		#endif
+        BeginValue();
 		#ifdef ENABLE_DIAG
 		if (!this.serializer)
 			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
@@ -77,13 +59,7 @@ class V30_Json_SmartSerializer : Managed {
 
 	// Put float value to serializer.
 	void PutFloat(float value) {
-		TryPutComma();
-		#ifdef ENABLE_DIAG
-		if (!PopState(V30_Json_ESerializerState.VALUE))
-			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutFloat(float): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
-		#else
-		PopState(); // V30_Json_ESerializerState.VALUE
-		#endif
+        BeginValue();
 		#ifdef ENABLE_DIAG
 		if (!this.serializer)
 			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
@@ -94,13 +70,7 @@ class V30_Json_SmartSerializer : Managed {
 
 	// Put string value to serializer.
 	void PutString(string value) {
-		TryPutComma();
-		#ifdef ENABLE_DIAG
-		if (!PopState(V30_Json_ESerializerState.VALUE))
-			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutString(string): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
-		#else
-		PopState(); // V30_Json_ESerializerState.VALUE
-		#endif
+        BeginValue();
 		#ifdef ENABLE_DIAG
 		if (!this.serializer)
 			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
@@ -111,13 +81,7 @@ class V30_Json_SmartSerializer : Managed {
 
 	// Begins serialization of array.
 	void BeginArray() {
-		TryPutComma();
-		#ifdef ENABLE_DIAG
-		if (!PopState(V30_Json_ESerializerState.VALUE))
-			Debug.Error(string.Format("[V30][Json][SmartSerializer] BeginArray(): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
-		#else
-		PopState(); // V30_Json_ESerializerState.VALUE
-		#endif
+        BeginValue();
 		#ifdef ENABLE_DIAG
 		if (!this.serializer)
 			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
@@ -147,13 +111,7 @@ class V30_Json_SmartSerializer : Managed {
 
 	// Begins serialization of object.
 	void BeginObject() {
-		TryPutComma();
-		#ifdef ENABLE_DIAG
-		if (!PopState(V30_Json_ESerializerState.VALUE))
-			Debug.Error(string.Format("[V30][Json][SmartSerializer] BeginObject(): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
-		#else
-		PopState(); // V30_Json_ESerializerState.VALUE
-		#endif
+        BeginValue();
 		#ifdef ENABLE_DIAG
 		if (!this.serializer)
 			Debug.Error(string.Format("[V30][Json][SmartSerializer] PutNull(): serializer is destroyed."));
@@ -227,30 +185,32 @@ class V30_Json_SmartSerializer : Managed {
 	};
 
 	void PutClass(Class instance) {
-		TryPutComma();
+        BeginValue();
 		if (!instance) {
 			PutNull();
 			return;
 		};
+        // TODO
+        EndValue();
 	};
 
 	// Returns `true` if serializing root value.
-	bool IsRoot() {
+	protected bool IsRoot() {
 		return GetContainerState() == V30_Json_ESerializerState.ROOT;
 	};
 
 	// Returns `true` if serializing array.
-	bool IsArray() {
+	protected bool IsArray() {
 		return GetContainerState() == V30_Json_ESerializerState.ARRAY;
 	};
 
 	// Returns `true` if serializing object.
-	bool IsObject() {
+	protected bool IsObject() {
 		return GetContainerState() == V30_Json_ESerializerState.OBJECT;
 	};
 
 	// Returns `true` if `IsArray()` or `IsObject()` returns `true`.
-	bool IsContainer() {
+	protected bool IsContainer() {
 		return IsArray() || IsObject();
 	};
 
@@ -260,12 +220,12 @@ class V30_Json_SmartSerializer : Managed {
 	};
 
 	// Returns `true` if expecting object's entry key (Next call must be `PutKey`).
-	bool IsKey() {
+	protected bool IsKey() {
 		return GetState() == V30_Json_ESerializerState.KEY;
 	};
 
 	// Returns `true` if expecting any value (Always `true` except when `IsKey` is `true`).
-	bool IsValue() {
+	protected bool IsValue() {
 		return GetState() == V30_Json_ESerializerState.VALUE;
 	};
 
@@ -333,6 +293,16 @@ class V30_Json_SmartSerializer : Managed {
 		PushState(V30_Json_ESerializerState.ROOT);
 		PushState(V30_Json_ESerializerState.VALUE);
 	};
+
+    protected void BeginValue() {
+		TryPutComma();
+		#ifdef ENABLE_DIAG
+		if (!PopState(V30_Json_ESerializerState.VALUE))
+			Debug.Error(string.Format("[V30][Json][SmartSerializer] BeginValue(): serializer in wrong state! Expected to be in %1 state, but it's in %2.", V30_Json_ESerializerStateName(V30_Json_ESerializerState.VALUE), V30_Json_ESerializerStateName(GetState())));
+		#else
+		PopState(); // V30_Json_ESerializerState.VALUE
+		#endif
+    };
 
 	// Finishes value, putting ENDED or COMMA state depending on the current state.
 	protected void EndValue() {

@@ -3,45 +3,49 @@ class V30_Json_SerializerHelper {
 	protected void V30_Json_SerializerHelper();
 
 	// Overload for putting `null` value to serializer `serializer`.
-	static void Put(notnull V30_Json_Serializer serializer) {
-		serializer.PutNull();
+	static void Write(notnull V30_Json_Serializer serializer) {
+		serializer.WriteNull();
+	};
+
+	static void Write(notnull V30_Json_Serializer serializer, void value) {
+		serializer.WriteNull();
 	};
 
 	// Overload for putting boolean value to serializer `serializer`.
-	static void Put(notnull V30_Json_Serializer serializer, bool value) {
-		serializer.PutBool(value);
+	static void Write(notnull V30_Json_Serializer serializer, bool value) {
+		serializer.WriteBool(value);
 	};
 
 	// Overload for putting integer value to serializer `serializer`.
-	static void Put(notnull V30_Json_Serializer serializer, int value) {
-		serializer.PutInt(value);
+	static void Write(notnull V30_Json_Serializer serializer, int value) {
+		serializer.WriteInt(value);
 	};
 
 	// Overload for putting floating point value to serializer `serializer`.
-	static void Put(notnull V30_Json_Serializer serializer, float value) {
-		serializer.PutFloat(value);
+	static void Write(notnull V30_Json_Serializer serializer, float value) {
+		serializer.WriteFloat(value);
 	};
 
 	// Overload for putting string value to serializer `serializer`.
-	static void Put(notnull V30_Json_Serializer serializer, string value) {
-		serializer.PutString(value);
+	static void Write(notnull V30_Json_Serializer serializer, string value) {
+		serializer.WriteString(value);
 	};
 
 	// Overload for putting `array<T>`, `map<string, T>` or `Class` value to serializer `serializer`.
-	static void Put(notnull V30_Json_Serializer serializer, notnull Class instance) {
+	static void Write(notnull V30_Json_Serializer serializer, notnull Class instance) {
 		auto type = instance.Type();
 		auto typeAttribute = GetSerializerAttribute(type);
 		if (typeAttribute)
 			typeAttribute.Serialize(serializer, instance);
 		else if (type.IsInherited(array))
-			PutArray(serializer, Managed.Cast(instance));
+			WriteArray(serializer, Managed.Cast(instance));
 		else if (type.IsInherited(map))
-			PutObject(serializer, Managed.Cast(instance));
+			WriteObject(serializer, Managed.Cast(instance));
 		else
-			PutClass(serializer, instance);
+			WriteClass(serializer, instance);
 	};
 
-	static void Put(notnull V30_Json_Serializer serializer, typename type, notnull Class instance, int i) {
+	static void Write(notnull V30_Json_Serializer serializer, typename type, notnull Class instance, int i) {
 		auto variableAttribute = GetSerializerVariableAttribute(type, i);
 		if (variableAttribute) {
 			Class variable;
@@ -54,16 +58,16 @@ class V30_Json_SerializerHelper {
 		auto variableType = type.GetVariableType(i);
 		switch (variableType) {
 			case bool:
-				V30_Json_SerializerHelperT<bool>.Put(serializer, type, instance, i);
+				V30_Json_SerializerHelperT<bool>.Write(serializer, type, instance, i);
 				break;
 			case int:
-				V30_Json_SerializerHelperT<int>.Put(serializer, type, instance, i);
+				V30_Json_SerializerHelperT<int>.Write(serializer, type, instance, i);
 				break;
 			case float:
-				V30_Json_SerializerHelperT<float>.Put(serializer, type, instance, i);
+				V30_Json_SerializerHelperT<float>.Write(serializer, type, instance, i);
 				break;
 			case string:
-				V30_Json_SerializerHelperT<string>.Put(serializer, type, instance, i);
+				V30_Json_SerializerHelperT<string>.Write(serializer, type, instance, i);
 				break;
 			default: {
 				#ifdef ENABLE_DIAG
@@ -72,119 +76,120 @@ class V30_Json_SerializerHelper {
 				#endif
 				Class variable;
 				type.GetVariableValue(instance, i, variable);
-				Put(serializer, variable);
+				Write(serializer, variable);
 				break;
 			};
 		};
 	};
 
-	static void PutArray(notnull V30_Json_Serializer serializer, notnull Managed arr) {
+	static void WriteArray(notnull V30_Json_Serializer serializer, notnull Managed arr) {
 		auto type = arr.Type();
 		bool subTypeIsRef;
 		auto subType = GetArraySubType(type, subTypeIsRef);
-		PutArray(serializer, arr, subType, subTypeIsRef);
+		WriteArray(serializer, arr, subType, subTypeIsRef);
 	};
 
-	static void PutArray(notnull V30_Json_Serializer serializer, notnull Managed arr, typename subType, bool subTypeIsRef = true) {
+	static void WriteArray(notnull V30_Json_Serializer serializer, notnull Managed arr, typename subType, bool subTypeIsRef = true) {
 		switch (subType) {
 			case bool:
-				V30_Json_SerializerHelperT<bool>.Put(serializer, array<bool>.Cast(arr));
+				V30_Json_SerializerHelperT<bool>.Write(serializer, array<bool>.Cast(arr));
 				break;
 			case int:
-				V30_Json_SerializerHelperT<int>.Put(serializer, array<int>.Cast(arr));
+				V30_Json_SerializerHelperT<int>.Write(serializer, array<int>.Cast(arr));
 				break;
 			case float:
-				V30_Json_SerializerHelperT<float>.Put(serializer, array<float>.Cast(arr));
+				V30_Json_SerializerHelperT<float>.Write(serializer, array<float>.Cast(arr));
 				break;
 			case string:
-				V30_Json_SerializerHelperT<string>.Put(serializer, array<string>.Cast(arr));
+				V30_Json_SerializerHelperT<string>.Write(serializer, array<string>.Cast(arr));
 				break;
 			default:
 				#ifdef ENABLE_DIAG
 				if (!subType.IsInherited(Class) || !GetSerializerAttribute(subType))
 					Debug.Error(string.Format("[V30][JSON][SerializerHelper] PutArray(V30_Json_Serializer, Managed): Unsupported type %1 for serialization in array.", subType));
 				#endif
-				PutArray(serializer, arr, GetSerializerAttribute(subType), subTypeIsRef);
+				WriteArray(serializer, arr, GetSerializerAttribute(subType), subTypeIsRef);
 				break;
 		};
 	};
 
-	static void PutArray(notnull V30_Json_Serializer serializer, notnull Managed arr, notnull V30_Json_SerializerAttribute attribute, bool isRef = true) {
+	static void WriteArray(notnull V30_Json_Serializer serializer, notnull Managed arr, notnull V30_Json_SerializerAttribute attribute, bool isRef = true) {
 		if (isRef)
 			attribute.SerializeArrayRef(serializer, arr);
 		else
 			attribute.SerializeArray(serializer, arr);
 	};
 
-	static void PutObject(notnull V30_Json_Serializer serializer, notnull Managed obj) {
+	static void WriteObject(notnull V30_Json_Serializer serializer, notnull Managed obj) {
 		auto type = obj.Type();
 		bool subTypeIsRef;
 		auto subType = GetObjectSubType(type, subTypeIsRef);
-		PutObject(serializer, obj, subType, subTypeIsRef);
+		WriteObject(serializer, obj, subType, subTypeIsRef);
 	};
 
-	static void PutObject(notnull V30_Json_Serializer serializer, notnull Managed obj, typename subType, bool subTypeIsRef = true) {
+	static void WriteObject(notnull V30_Json_Serializer serializer, notnull Managed obj, typename subType, bool subTypeIsRef = true) {
 		switch (subType) {
 			case bool:
-				V30_Json_SerializerHelperT<bool>.Put(serializer, map<string, bool>.Cast(obj));
+				V30_Json_SerializerHelperT<bool>.Write(serializer, map<string, bool>.Cast(obj));
 				break;
 			case int:
-				V30_Json_SerializerHelperT<int>.Put(serializer, map<string, int>.Cast(obj));
+				V30_Json_SerializerHelperT<int>.Write(serializer, map<string, int>.Cast(obj));
 				break;
 			case float:
-				V30_Json_SerializerHelperT<float>.Put(serializer, map<string, float>.Cast(obj));
+				V30_Json_SerializerHelperT<float>.Write(serializer, map<string, float>.Cast(obj));
 				break;
 			case string:
-				V30_Json_SerializerHelperT<string>.Put(serializer, map<string, string>.Cast(obj));
+				V30_Json_SerializerHelperT<string>.Write(serializer, map<string, string>.Cast(obj));
 				break;
 			default:
 				#ifdef ENABLE_DIAG
 				if (!subType.IsInherited(Class) || !GetSerializerAttribute(subType))
 					Debug.Error(string.Format("[V30][JSON][SerializerHelper] PutObject(V30_Json_Serializer, Managed): Unsupported type %1 for serialization in object.", subType));
 				#endif
-				PutObject(serializer, obj, GetSerializerAttribute(subType), subTypeIsRef);
+				WriteObject(serializer, obj, GetSerializerAttribute(subType), subTypeIsRef);
 				break;
 		};
 	};
 
-	static void PutObject(notnull V30_Json_Serializer serializer, notnull Managed obj, notnull V30_Json_SerializerAttribute attribute, bool isRef = true) {
+	static void WriteObject(notnull V30_Json_Serializer serializer, notnull Managed obj, notnull V30_Json_SerializerAttribute attribute, bool isRef = true) {
 		if (isRef)
 			attribute.SerializeObjectRef(serializer, obj);
 		else
 			attribute.SerializeObject(serializer, obj);
 	};
 
-	static void PutClass(notnull V30_Json_Serializer serializer, notnull Class instance) {
-		serializer.BeginObject();
+	static void WriteClass(notnull V30_Json_Serializer serializer, notnull Class instance) {
+		serializer.WriteObjectBegin();
 		auto type = instance.Type();
 		auto n = type.GetVariableCount();
 		for (auto i = 0; i < n; i++) {
-			serializer.TryPutComma();
+			if (i > 0)
+				serializer.WriteComma();
 			auto variableName = type.GetVariableName(i);
-			serializer.PutKey(variableName);
+			serializer.WriteString(variableName);
 			auto variableType = type.GetVariableType(i);
 			switch (variableType) {
 				case bool:
-					V30_Json_SerializerHelperT<bool>.Put(serializer, type, instance, i);
+					V30_Json_SerializerHelperT<bool>.Write(serializer, type, instance, i);
 					break;
 				case int:
-					V30_Json_SerializerHelperT<int>.Put(serializer, type, instance, i);
+					V30_Json_SerializerHelperT<int>.Write(serializer, type, instance, i);
 					break;
 				case float:
-					V30_Json_SerializerHelperT<float>.Put(serializer, type, instance, i);
+					V30_Json_SerializerHelperT<float>.Write(serializer, type, instance, i);
 					break;
 				case string:
-					V30_Json_SerializerHelperT<string>.Put(serializer, type, instance, i);
+					V30_Json_SerializerHelperT<string>.Write(serializer, type, instance, i);
 					break;
 				default: {
 					break;
 				};
 			};
 		};
-		serializer.EndObject();
+		serializer.WriteObjectEnd();
 	};
 
-    static void Put(notnull V30_Json_Serializer serializer, notnull V30_Json_SerializerAttribute serializerAttr, Class instance) {
+    static void Write(notnull V30_Json_Serializer serializer, notnull V30_Json_SerializerAttribute serializerAttr, Class instance) {
         serializerAttr.Serialize(serializer, instance);
     };
 
@@ -369,30 +374,36 @@ class V30_Json_SerializerHelper {
 class V30_Json_SerializerHelperT<Class T> {
 	protected void V30_Json_SerializerHelperT();
 
-	static void Put(notnull V30_Json_Serializer serializer, notnull array<T> arr) {
-		serializer.BeginArray();
-		foreach (auto val : arr) {
-			serializer.TryPutComma();
-			V30_Json_SerializerHelper.Put(serializer, val);
+	static void Write(notnull V30_Json_Serializer serializer, notnull array<T> arr) {
+		serializer.WriteArrayBegin();
+		foreach (auto i, auto val : arr) {
+			if (i > 0)
+				serializer.WriteComma();
+			V30_Json_SerializerHelper.Write(serializer, val);
 		};
-		serializer.EndArray();
+		serializer.WriteArrayEnd();
 	};
 
-	static void Put(notnull V30_Json_Serializer serializer, notnull map<string, T> obj) {
-		serializer.BeginObject();
+	static void Write(notnull V30_Json_Serializer serializer, notnull map<string, T> obj) {
+		serializer.WriteObjectBegin();
+		auto comma = false;
 		foreach (auto key, auto val : obj) {
-			serializer.TryPutComma();
-			serializer.PutKey(key);
-			V30_Json_SerializerHelper.Put(serializer, val);
+			if (comma)
+				serializer.WriteComma();
+			else
+				comma = true;
+			serializer.WriteString(key);
+			serializer.WriteColon();
+			V30_Json_SerializerHelper.Write(serializer, val);
 		};
-		serializer.EndObject();
+		serializer.WriteObjectEnd();
 	};
 
-	static void Put(notnull V30_Json_Serializer serializer, typename type, notnull Class instance, int i) {
+	static void Write(notnull V30_Json_Serializer serializer, typename type, notnull Class instance, int i) {
 		T value;
 		if (!type.GetVariableValue(instance, i, value))
 			return;
-		V30_Json_SerializerHelper.Put(serializer, value);
+		V30_Json_SerializerHelper.Write(serializer, value);
 	};
 };
 
