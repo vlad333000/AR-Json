@@ -337,7 +337,7 @@ class V30_Json_SerializerHelper {
 		if (!typeString.StartsWith("map<string"))
 			return void;
 		auto typeStringLength = typeString.Length();
-		auto subTypeStringPrefixLength = "map<string".Length();
+		auto subTypeStringPrefixLength = "map<string,".Length();
 		auto subTypeStringPostfixLength = ">".Length();
 		auto subTypeStringLength = typeStringLength - subTypeStringPrefixLength - subTypeStringPostfixLength;
 		auto subTypeString = typeString.Substring(subTypeStringPrefixLength, subTypeStringLength);
