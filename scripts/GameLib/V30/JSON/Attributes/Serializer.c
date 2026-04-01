@@ -33,3 +33,57 @@ class V30_Json_SerializerAttribute {
 	// Cast `obj` to `map<string, ref T>` where `T` is your type and call `Deserialize` method for each element in this map.
 	bool DeserializeObjectRef(notnull V30_Json_Deserializer deserializer, out Managed obj, out string error);
 };
+
+class V30_Json_SerializerAttributeHelperT<Class T> {
+	static void SerializeArray(notnull V30_Json_Serializer serializer, notnull Managed arr, notnull V30_Json_SerializerAttribute attribute) {
+		serializer.WriteArrayBegin();
+		foreach (auto i, auto el : array<T>.Cast(arr)) {
+			if (i > 0)
+				serializer.WriteComma();
+			attribute.Serialize(serializer, el);
+		};
+		serializer.WriteArrayEnd();
+	};
+
+	static void SerializeObject(notnull V30_Json_Serializer serializer, notnull Managed obj, notnull V30_Json_SerializerAttribute attribute) {
+		serializer.WriteObjectBegin();
+		auto comma = false;
+		foreach (auto key, auto el : map<string, T>.Cast(obj)) {
+			if (comma)
+				serializer.WriteComma();
+			else
+				comma = true;
+			serializer.WriteString(key);
+			serializer.WriteColon();
+			attribute.Serialize(serializer, el);
+		};
+		serializer.WriteObjectEnd();
+	};
+};
+
+class V30_Json_SerializerAttributeHelperRefT<Managed T> {
+	static void SerializeArray(notnull V30_Json_Serializer serializer, notnull Managed arr, notnull V30_Json_SerializerAttribute attribute) {
+		serializer.WriteArrayBegin();
+		foreach (auto i, auto el : array<ref T>.Cast(arr)) {
+			if (i > 0)
+				serializer.WriteComma();
+			attribute.Serialize(serializer, el);
+		};
+		serializer.WriteArrayEnd();
+	};
+
+	static void SerializeObject(notnull V30_Json_Serializer serializer, notnull Managed obj, notnull V30_Json_SerializerAttribute attribute) {
+		serializer.WriteObjectBegin();
+		auto comma = false;
+		foreach (auto key, auto el : map<string, ref T>.Cast(obj)) {
+			if (comma)
+				serializer.WriteComma();
+			else
+				comma = true;
+			serializer.WriteString(key);
+			serializer.WriteColon();
+			attribute.Serialize(serializer, el);
+		};
+		serializer.WriteObjectEnd();
+	};
+};
