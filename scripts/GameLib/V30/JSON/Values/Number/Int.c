@@ -1,11 +1,15 @@
-class V30_Json_Int : V30_Json_Number {
-	protected int m_iValue;
+class V30_JSON_Int : V30_JSON_Number {
+    protected int value;
 
-	void V30_Json_Int(int value = 0) {
-		m_iValue = value;
-	};
+    void V30_JSON_Int(int value = 0) {
+        SetValue(value);
+    };
 
-	int Get() {
-		return m_iValue;
-	};
+    int GetValue() {
+        return this.value;
+    };
+
+    void SetValue(int value) {
+        this.value = value;
+    };
 };

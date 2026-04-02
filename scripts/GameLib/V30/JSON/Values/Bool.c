@@ -1,11 +1,15 @@
-class V30_Json_bool : V30_Json_Value {
-	protected bool m_bValue;
+class V30_JSON_Bool : V30_JSON_Value {
+    protected bool value;
 
-	void V30_Json_bool(bool value = false) {
-		m_bValue = value;
-	};
+    void V30_JSON_Bool(bool value = false) {
+        SetValue(value);
+    };
 
-	bool Get() {
-		return m_bValue;
-	};
+    bool GetValue() {
+        return this.value;
+    };
+
+    void SetValue(bool value) {
+        this.value = value;
+    };
 };

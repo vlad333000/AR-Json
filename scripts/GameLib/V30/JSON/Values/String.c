@@ -1,15 +1,19 @@
-class V30_Json_String : V30_Json_Value {
-	protected string m_sValue;
+class V30_JSON_String : V30_JSON_Value {
+    protected string value;
 
-	void V30_Json_String(string value = "") {
-		m_sValue = value;
-	};
+    void V30_JSON_String(string value = "") {
+        SetValue(value);
+    };
 
-	string Get() {
-		return m_sValue;
-	};
+    int Length() {
+        return this.value.Length();
+    };
 
-	int Length() {
-		return m_sValue.Length();
-	};
+    string GetValue() {
+        return this.value;
+    };
+
+    void SetValue(string value) {
+        this.value = value;
+    };
 };

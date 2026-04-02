@@ -1,11 +1,15 @@
-class V30_Json_Float : V30_Json_Number {
-	protected float m_fValue;
+class V30_JSON_Float : V30_JSON_Number {
+    protected float value;
 
-	void V30_Json_Float(float value = 0.0) {
-		m_fValue = value;
-	};
+    void V30_JSON_Float(float value = 0.0) {
+        SetValue(value);
+    };
 
-	float Get() {
-		return m_fValue;
-	};
+    float GetValue() {
+        return this.value;
+    };
+
+    void SetValue(float value) {
+        this.value = value;
+    };
 };

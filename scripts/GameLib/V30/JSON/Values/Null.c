@@ -1,5 +1,7 @@
-class V30_Json_Null : V30_Json_Value {
-	void V30_Json_Null() {
-		return;
-	};
+class V30_JSON_Null : V30_JSON_Value {
+    void V30_JSON_Null();
+
+    Class GetValue() {
+        return null;
+    };
 };
