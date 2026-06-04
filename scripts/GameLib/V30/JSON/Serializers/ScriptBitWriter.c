@@ -1,1 +1,0 @@
-// TODO: Serialize to ScriptBitWriter

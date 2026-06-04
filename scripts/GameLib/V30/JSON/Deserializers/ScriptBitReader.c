@@ -1,1 +1,0 @@
-// TODO: Deserialize from ScripBitReader

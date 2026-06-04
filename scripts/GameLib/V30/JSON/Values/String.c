@@ -1,19 +1,43 @@
+//[V30_JSON_StringSerializerAttribute()]
 class V30_JSON_String : V30_JSON_Value {
-    protected string value;
+    protected string m_Value;
 
     void V30_JSON_String(string value = "") {
         SetValue(value);
     };
 
     int Length() {
-        return this.value.Length();
+        return m_Value.Length();
     };
 
     string GetValue() {
-        return this.value;
+        return m_Value;
     };
 
-    void SetValue(string value) {
-        this.value = value;
+    void SetValue(string newValue) {
+        m_Value = newValue;
     };
 };
+
+class V30_JSON_StringSerializerAttribute : V30_JSON_StreamSerializerAttribute {
+    override void StreamSerialize(notnull V30_JSON_StreamSerializer serializer, Class instance) {
+        serializer.Serialize(V30_JSON_String.Cast(instance).GetValue());
+    };
+
+    override void SerializeArray(notnull V30_JSON_Serializer serializer, notnull Managed arr) {
+        V30_JSON_SerializerAttributeHelperT<V30_JSON_String>.SerializeArray(serializer, arr);
+    };
+
+    override void SerializeArrayRef(notnull V30_JSON_Serializer serializer, notnull Managed arr) {
+        V30_JSON_SerializerAttributeHelperRefT<V30_JSON_String>.SerializeArray(serializer, arr);
+    };
+
+    override void SerializeObject(notnull V30_JSON_Serializer serializer, notnull Managed obj) {
+        V30_JSON_SerializerAttributeHelperT<V30_JSON_String>.SerializeObject(serializer, obj);
+    };
+
+    override void SerializeObjectRef(notnull V30_JSON_Serializer serializer, notnull Managed obj) {
+        V30_JSON_SerializerAttributeHelperRefT<V30_JSON_String>.SerializeObject(serializer, obj);
+    };
+};
+
