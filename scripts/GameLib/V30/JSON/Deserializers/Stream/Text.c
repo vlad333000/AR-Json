@@ -589,6 +589,59 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
         return true;
     };
 
+    protected bool ParseUnicodeEscape(string buffer, int i, int length, out int unicode) {
+        if (i + 4 >= length)
+            return Error("unterminated unicode escape sequence");
+
+        unicode = 0;
+        for (int j = 1; j <= 4; j++) {
+            int digit = buffer.ToAscii(i + j);
+            if (digit >= 0x30 && digit <= 0x39)
+                unicode = (unicode << 4) | (digit - 0x30);
+            else if (digit >= 0x41 && digit <= 0x46)
+                unicode = (unicode << 4) | (digit - 0x37);
+            else if (digit >= 0x61 && digit <= 0x66)
+                unicode = (unicode << 4) | (digit - 0x57);
+            else
+                return ErrorFormat("invalid unicode escape sequence: \\u%1", buffer.Substring(i + 1, 4));
+        };
+
+        return true;
+    };
+
+    protected string Utf8FromUnicode(int unicode) {
+        if (unicode <= 0x7F) {
+            return unicode.AsciiToString();
+        }
+        else if (unicode <= 0x7FF) {
+            int b1 = 0xC0 | (unicode >> 6);
+            int b2 = 0x80 | (unicode & 0x3F);
+            b1 -= 0x100;
+            b2 -= 0x100;
+            return b1.AsciiToString() + b2.AsciiToString();
+        }
+        else if (unicode <= 0xFFFF) {
+            int b1 = 0xE0 | (unicode >> 12);
+            int b2 = 0x80 | ((unicode >> 6) & 0x3F);
+            int b3 = 0x80 | (unicode & 0x3F);
+            b1 -= 0x100;
+            b2 -= 0x100;
+            b3 -= 0x100;
+            return b1.AsciiToString() + b2.AsciiToString() + b3.AsciiToString();
+        }
+        else {
+            int b1 = 0xF0 | (unicode >> 18);
+            int b2 = 0x80 | ((unicode >> 12) & 0x3F);
+            int b3 = 0x80 | ((unicode >> 6) & 0x3F);
+            int b4 = 0x80 | (unicode & 0x3F);
+            b1 -= 0x100;
+            b2 -= 0x100;
+            b3 -= 0x100;
+            b4 -= 0x100;
+            return b1.AsciiToString() + b2.AsciiToString() + b3.AsciiToString() + b4.AsciiToString();
+        };
+    };
+
     override bool DeserializeString(out string value) {
         if (!IsString())
             return Error("string value expected");
@@ -674,44 +727,29 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
                     value += "\t";
                     break;
                 case "u":
-                    if (i + 4 >= length)
-                        return Error("unterminated unicode escape sequence");
+                    int unicode;
+                    if (!ParseUnicodeEscape(buffer, i, length, unicode))
+                        return false;
 
-                    int unicode = 0;
-                    for (int j = 1; j <= 4; j++) {
-                        int digit = buffer.ToAscii(i + j);
-                        if (digit >= 0x30 && digit <= 0x39)
-                            unicode = (unicode << 4) | (digit - 0x30);
-                        else if (digit >= 0x41 && digit <= 0x46)
-                            unicode = (unicode << 4) | (digit - 0x37);
-                        else if (digit >= 0x61 && digit <= 0x66)
-                            unicode = (unicode << 4) | (digit - 0x57);
-                        else
-                            return ErrorFormat("invalid unicode escape sequence: \\u%1", buffer.Substring(i + 1, 4));
+                    if (unicode >= 0xD800 && unicode <= 0xDBFF) {
+                        if (i + 10 >= length || buffer.Get(i + 5) != "\\" || buffer.Get(i + 6) != "u")
+                            return ErrorFormat("invalid unicode surrogate pair: \\u%1", buffer.Substring(i + 1, 4));
+
+                        int lowSurrogate;
+                        if (!ParseUnicodeEscape(buffer, i + 6, length, lowSurrogate))
+                            return false;
+
+                        if (lowSurrogate < 0xDC00 || lowSurrogate > 0xDFFF)
+                            return ErrorFormat("invalid unicode surrogate pair: \\u%1\\u%2", buffer.Substring(i + 1, 4), buffer.Substring(i + 7, 4));
+
+                        unicode = 0x10000 + ((unicode - 0xD800) << 10) + (lowSurrogate - 0xDC00);
+                        i += 6;
+                    }
+                    else if (unicode >= 0xDC00 && unicode <= 0xDFFF) {
+                        return ErrorFormat("invalid unicode surrogate pair: \\u%1", buffer.Substring(i + 1, 4));
                     };
 
-                    if (unicode <= 0x7F) {
-                        value += unicode.AsciiToString();
-                    }
-                    else if (unicode <= 0x7FF) {
-                        int b1 = 0xC0 | (unicode >> 6);
-                        int b2 = 0x80 | (unicode & 0x3F);
-                        b1 -= 0x100;
-                        b2 -= 0x100;
-                        value += b1.AsciiToString();
-                        value += b2.AsciiToString();
-                    }
-                    else {
-                        int b1 = 0xE0 | (unicode >> 12);
-                        int b2 = 0x80 | ((unicode >> 6) & 0x3F);
-                        int b3 = 0x80 | (unicode & 0x3F);
-                        b1 -= 0x100;
-                        b2 -= 0x100;
-                        b3 -= 0x100;
-                        value += b1.AsciiToString();
-                        value += b2.AsciiToString();
-                        value += b3.AsciiToString();
-                    };
+                    value += Utf8FromUnicode(unicode);
                     i += 4;
                     break;
                 default:
