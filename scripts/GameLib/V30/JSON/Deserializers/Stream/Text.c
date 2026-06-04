@@ -885,7 +885,7 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
 
 
     override protected bool Error(string message = "internal error") {
-        return super.ErrorFormat("at %1:%2: %3", m_Line.ToString(), m_Column.ToString(), message);
+        return super.Error(string.Format("at %1:%2: %3", m_Line.ToString(), m_Column.ToString(), message));
     };
 
     protected bool ErrorAt(int lineShift, int columnShift, string message) {
