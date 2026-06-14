@@ -1,34 +1,6 @@
 class V30_JSON_StreamSerializer : V30_JSON_Serializer {
     protected void V30_JSON_StreamSerializer();
 
-    override void Serialize(notnull V30_JSON_Null value) {
-        Serialize(value.GetValue());
-    };
-
-    override void Serialize(notnull V30_JSON_Bool value) {
-        Serialize(value.GetValue());
-    };
-
-    override void Serialize(notnull V30_JSON_Int value) {
-        Serialize(value.GetValue());
-    };
-
-    override void Serialize(notnull V30_JSON_Float value) {
-        Serialize(value.GetValue());
-    };
-
-    override void Serialize(notnull V30_JSON_String value) {
-        Serialize(value.GetValue());
-    };
-
-    override void Serialize(notnull V30_JSON_Array value) {
-        Serialize(value.GetValue());
-    };
-
-    override void Serialize(notnull V30_JSON_Object value) {
-        Serialize(value.GetValue());
-    };
-
     void Serialize(string key, notnull V30_JSON_Value value) {
         if (value.IsInherited(V30_JSON_Null))
             Serialize(key, V30_JSON_Null.Cast(value));
@@ -104,9 +76,7 @@ class V30_JSON_StreamSerializer : V30_JSON_Serializer {
 
 
 
-    protected void SerializeNull();
-
-    protected void SerializeNull(string key) {
+    void SerializeNull(string key) {
         SerializeKey(key);
         SerializeNull();
     };
@@ -137,6 +107,18 @@ class V30_JSON_StreamSerializer : V30_JSON_Serializer {
             return;
         };
         V30_JSON_StreamSerializerHelper.Serialize(this, instance);
+    };
+
+    override void Serialize(notnull V30_JSON_Array value) {
+        BeginArraySerialization();
+        super.Serialize(value);
+        EndArraySerialization();
+    };
+
+    override void Serialize(notnull V30_JSON_Object value) {
+        BeginObjectSerialization();
+        super.Serialize(value);
+        EndObjectSerialization();
     };
 
     void Serialize(string key, Class instance) {

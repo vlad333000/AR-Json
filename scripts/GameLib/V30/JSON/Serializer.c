@@ -10,15 +10,19 @@ class V30_JSON_Serializer {
                 Serialize(V30_JSON_Bool.Cast(value));
                 break;
             case V30_JSON_Int:
+                Serialize(V30_JSON_Int.Cast(value));
+                break;
             case V30_JSON_Float:
-                Serialize(V30_JSON_Number.Cast(value));
+                Serialize(V30_JSON_Float.Cast(value));
                 break;
             case V30_JSON_String:
                 Serialize(V30_JSON_String.Cast(value));
                 break;
             case V30_JSON_Array:
+                Serialize(V30_JSON_Array.Cast(value));
+                break;
             case V30_JSON_Object:
-                Serialize(V30_JSON_Container.Cast(value));
+                Serialize(V30_JSON_Object.Cast(value));
                 break;
             default:
                 Debug.Error(string.Format("Unknown JSON type: %1", value.Type()));
@@ -26,9 +30,13 @@ class V30_JSON_Serializer {
         };
     };
 
-    void Serialize(notnull V30_JSON_Null value);
+    void Serialize(notnull V30_JSON_Null value) {
+        SerializeNull();
+    };
 
-    void Serialize(notnull V30_JSON_Bool value);
+    void Serialize(notnull V30_JSON_Bool value) {
+        Serialize(value.GetValue());
+    };
 
     void Serialize(notnull V30_JSON_Number value) {
         switch (value.Type()) {
@@ -44,11 +52,17 @@ class V30_JSON_Serializer {
         };
     };
 
-    void Serialize(notnull V30_JSON_Int value);
+    void Serialize(notnull V30_JSON_Int value) {
+        Serialize(value.GetValue());
+    };
 
-    void Serialize(notnull V30_JSON_Float value);
+    void Serialize(notnull V30_JSON_Float value) {
+        Serialize(value.GetValue());
+    };
 
-    void Serialize(notnull V30_JSON_String value);
+    void Serialize(notnull V30_JSON_String value) {
+        Serialize(value.GetValue());
+    };
 
     void Serialize(notnull V30_JSON_Container value) {
         switch (value.Type()) {
@@ -64,29 +78,31 @@ class V30_JSON_Serializer {
         };
     };
 
-    void Serialize(notnull V30_JSON_Array value);
-
-    void Serialize(notnull V30_JSON_Object value);
-
-    void Serialize(bool value) {
-        Serialize(new V30_JSON_Bool(value));
+    void Serialize(notnull V30_JSON_Array value) {
+        foreach (auto element : value.GetValue())
+            Serialize(element);
     };
 
-    void Serialize(int value) {
-        Serialize(new V30_JSON_Int(value));
+    void Serialize(notnull V30_JSON_Object value) {
+        foreach (auto key, auto element : value.GetValue()) {
+			SerializeKey(key);
+            Serialize(element);
+		};
     };
 
-    void Serialize(float value) {
-        Serialize(new V30_JSON_Float(value));
-    };
+    void SerializeNull();
 
-    void Serialize(string value) {
-        Serialize(new V30_JSON_String(value));
-    };
+    void Serialize(bool value);
+
+    void Serialize(int value);
+
+    void Serialize(float value);
+
+    void Serialize(string value);
 
     void Serialize(Class instance) {
         if (!instance) {
-            Serialize(V30_JSON_Null.GetInstance());
+            SerializeNull();
             return;
         };
         V30_JSON_SerializerHelper.Serialize(this, instance);
