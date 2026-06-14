@@ -3,9 +3,12 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
 
     protected int m_Column;
 
+    protected bool m_Comma;
+
     protected void V30_JSON_TextDeserializer() {
         m_Line = 1;
         m_Column = 1;
+        m_Comma = false;
     };
 
 
@@ -47,6 +50,7 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
             return false;
         m_Line = 1;
         m_Column = 1;
+        m_Comma = false;
         return true;
     };
 
@@ -192,35 +196,121 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
         return count;
     };
 
+    protected int PeakWhitespacesAt(int at) {
+        string char;
+        auto count = 0;
+        while (PeakCharAt(char, at + count)) {
+            if (!char.IsSpaceAt(0))
+                return count;
+            count++;
+        };
+        return count;
+    };
+
+    protected int GetValueAt() {
+        if (!IsDeserializingObjectKey())
+            return GetValueAt_Common();
+        else
+            return GetValueAt_Key();
+    };
+
+    protected int GetValueAt_Common() {
+		SkipWhitespaces();
+		
+        auto at = 0;
+		
+        if (m_Comma) {
+            string comma;
+            if (!PeakCharAt(comma, at) || comma != ",")
+                return -1;
+            at++;
+            at += PeakWhitespacesAt(at);
+        };
+        return at;
+    };
+
+    protected int GetValueAt_Key() {
+        // Trailing whitespaces
+        SkipWhitespaces();
+
+		auto at = 0;
+		
+        // Comma
+        if (m_Comma) {
+            string comma;
+            if (!PeakCharAt(comma, at) || comma != ",")
+                return -1;
+
+            // Whitespaces between comma and key
+            at++;
+            at += PeakWhitespacesAt(at);
+        };
+
+        // Key
+        string char;
+        if (!PeakCharAt(char, at) || char != "\"")
+            return -1;
+        at++;
+        auto escaped = false;
+        while (PeakCharAt(char, at)) {
+            if (!escaped && char == "\"")
+                break;
+            escaped = !escaped && char == "\\";
+            at++;
+        };
+        if (!PeakCharAt(char, at) || char != "\"")
+            return -1;
+
+        // Whitespaces between key and colon
+        at++;
+        at += PeakWhitespacesAt(at);
+
+        // Colon
+        if (!PeakCharAt(char, at) || char != ":")
+            return -1;
+
+        at++;
+        at += PeakWhitespacesAt(at);
+        return at;
+    };
+
 
 
     override bool IsNull() {
-        SkipWhitespaces();
+        auto at = GetValueAt();
+        if (at < 0)
+            return false;
         string buffer;
-        return PeakString(buffer, 4) == 4 && buffer == "null" && IsBorderAt(4);
+        return PeakStringFrom(buffer, at, 4) == 4 && buffer == "null" && IsBorderAt(at + 4);
     };
 
     override bool IsBool() {
-        SkipWhitespaces();
+        auto at = GetValueAt();
+        if (at < 0)
+            return false;
         string buffer;
-        return PeakString(buffer, 5) >= 4 && ((buffer.StartsWith("true") && IsBorderAt(4)) || (buffer == "false" && IsBorderAt(5)));
+        return PeakStringFrom(buffer, at, 5) >= 4 && ((buffer.StartsWith("true") && IsBorderAt(at + 4)) || (buffer == "false" && IsBorderAt(at + 5)));
     };
 
     override bool IsNumber() {
-        SkipWhitespaces();
+        auto at = GetValueAt();
+        if (at < 0)
+            return false;
         string char;
-        return PeakChar(char) && (char.IsDigitAt(0) || char == "-");
+        return PeakCharAt(char, at) && (char.IsDigitAt(0) || char == "-");
     };
 
     override bool IsInt() {
-        SkipWhitespaces();
+        auto valueAt = GetValueAt();
+        if (valueAt < 0)
+            return false;
         string first;
-        auto readed = PeakString(first, 1);
+        auto readed = PeakStringFrom(first, valueAt, 1);
         if (!readed)
             return false; // no data -> not number
         if (!first.IsDigitAt(0) && first != "-")
             return false; // not digit and not sign -> not number
-        auto from = 1;
+        auto from = valueAt + 1;
         while (readed) {
             string buffer;
             readed = PeakStringFrom(buffer, from, 8);
@@ -241,14 +331,16 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
     };
 
     override bool IsFloat() {
-        SkipWhitespaces();
+        auto valueAt = GetValueAt();
+        if (valueAt < 0)
+            return false;
         string first;
-        auto readed = PeakString(first, 1);
+        auto readed = PeakStringFrom(first, valueAt, 1);
         if (!readed)
             return false; // no data -> not number
         if (!first.IsDigitAt(0) && first != "-")
             return false; // not digit and not sign -> not number
-        auto from = 1;
+        auto from = valueAt + 1;
         while (readed) {
             string buffer;
             readed = PeakStringFrom(buffer, from, 8);
@@ -269,15 +361,19 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
     };
 
     override bool IsString() {
-        SkipWhitespaces();
+        auto at = GetValueAt();
+        if (at < 0)
+            return false;
         string char;
-        return PeakChar(char) && char == "\"";
+        return PeakCharAt(char, at) && char == "\"";
     };
 
     override bool IsContainer() {
-        SkipWhitespaces();
+        auto at = GetValueAt();
+        if (at < 0)
+            return false;
         string char;
-        return PeakChar(char) && (char == "[" || char == "{");
+        return PeakCharAt(char, at) && (char == "[" || char == "{");
     };
 
     override bool IsContainerEnd() {
@@ -287,9 +383,11 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
     };
 
     override bool IsArray() {
-        SkipWhitespaces();
+        auto at = GetValueAt();
+        if (at < 0)
+            return false;
         string char;
-        return PeakChar(char) && char == "[";
+        return PeakCharAt(char, at) && char == "[";
     };
 
     override bool IsArrayEnd() {
@@ -299,9 +397,11 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
     };
 
     override bool IsObject() {
-        SkipWhitespaces();
+        auto at = GetValueAt();
+        if (at < 0)
+            return false;
         string char;
-        return PeakChar(char) && char == "{";
+        return PeakCharAt(char, at) && char == "{";
     };
 
     override bool IsObjectEnd() {
@@ -322,10 +422,28 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
         return PeakChar(char) && char == ":";
     };
 
+    override protected bool BeginValueDeserialization() {
+        if (!super.BeginValueDeserialization())
+            return false;
+        if (!TryDeserializeComma())
+            return false;
+        return true;
+    };
+
+    override protected bool EndValueDeserialization() {
+        if (!super.EndValueDeserialization())
+            return false;
+        if (!IsDeserializingRoot())
+            m_Comma = true;
+        return true;
+    };
+
     override typename GetJsonType() {
-        SkipWhitespaces();
+        auto at = GetValueAt();
+        if (at < 0)
+            return typename.Empty;
         string char;
-        if (!PeakChar(char))
+        if (!PeakCharAt(char, at))
             return typename.Empty;
         switch (char) {
             case "n":
@@ -368,6 +486,8 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
     };
 
     override bool DeserializeNull() {
+        if (!BeginValueDeserialization())
+            return false;
         if (!IsNull())
             return Error("expected null value");
         #ifndef ENABLE_DIAG
@@ -381,10 +501,12 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
         if (Advance(4) < 4)
             return Error();
         #endif
-        return true;
+        return EndValueDeserialization();
     };
 
     override bool DeserializeBool(out bool value) {
+        if (!BeginValueDeserialization())
+            return false;
         if (!IsBool())
             return Error("expected boolean value");
         string char;
@@ -421,10 +543,12 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
             value = false;
         };
         #endif
-        return true;
+        return EndValueDeserialization();
     };
 
     override bool DeserializeInt(out int value) {
+        if (!BeginValueDeserialization())
+            return false;
         if (!IsInt())
             return Error("integer value expected");
         auto n = 0;
@@ -477,10 +601,12 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
         if (parsed != n)
             return ErrorFormat("failed to parse integer value: parsed %1 characters, expected %2 characters", parsed.ToString(), n.ToString());
         Advance(n);
-        return true;
+        return EndValueDeserialization();
     };
 
     override bool DeserializeFloat(out float value) {
+        if (!BeginValueDeserialization())
+            return false;
         if (!IsFloat())
             return Error("floating point value expected");
         auto n = 0;
@@ -586,7 +712,7 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
         if (parsed != n)
             return ErrorFormat("failed to parse floating point value: parsed %1 characters, expected %2 characters", parsed.ToString(), n.ToString());
         Advance(n);
-        return true;
+        return EndValueDeserialization();
     };
 
     protected bool ParseUnicodeEscape(string buffer, int i, int length, out int unicode) {
@@ -643,7 +769,17 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
     };
 
     override bool DeserializeString(out string value) {
-        if (!IsString())
+        auto isKey = IsDeserializingObjectKey();
+        if (!isKey)
+            if (!BeginValueDeserialization())
+                return false;
+        if (isKey) {
+            SkipWhitespaces();
+            string keyChar;
+            if (!PeakChar(keyChar) || keyChar != "\"")
+                return Error("string value expected");
+        }
+        else if (!IsString())
             return Error("string value expected");
         string char;
         if (!ReadChar(char))
@@ -675,6 +811,8 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
                 return false;
             if (!ReadChar(char))
                 return false;
+            if (!isKey)
+                return EndValueDeserialization();
             return true;
         }
 
@@ -762,10 +900,14 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
 
         if (from < length)
             value += buffer.Substring(from, length - from);
+        if (!isKey)
+            return EndValueDeserialization();
         return true;
     };
 
     override bool BeginArrayDeserialization() {
+        if (!super.BeginArrayDeserialization())
+            return false;
         SkipWhitespaces();
         string char;
         if (!PeakChar(char))
@@ -784,6 +926,8 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
     };
 
     override bool EndArrayDeserialization() {
+        if (!IsDeserializingArray())
+            return Error("array end is not expected in current context");
         SkipWhitespaces();
         string char;
         if (!PeakChar(char))
@@ -798,10 +942,12 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
         if (char != "]")
             return Error();
         #endif
-        return true;
+        return super.EndArrayDeserialization();
     };
 
     override bool BeginObjectDeserialization() {
+        if (!super.BeginObjectDeserialization())
+            return false;
         SkipWhitespaces();
         string char;
         if (!PeakChar(char))
@@ -820,12 +966,16 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
     };
 
     override protected bool DeserializeKey(out string key) {
-        if (!DeserializeString(key))
+        if (!TryDeserializeComma())
+            return false;
+        if (!super.DeserializeKey(key))
             return false;
         return DeserializeColon();
     };
 
     override bool EndObjectDeserialization() {
+        if (!IsDeserializingObject())
+            return Error("object end is not expected in current context");
         SkipWhitespaces();
         string char;
         if (!PeakChar(char))
@@ -840,11 +990,17 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
         if (char != "}")
             return Error();
         #endif
-        return true;
+        return super.EndObjectDeserialization();
+    };
+
+    protected bool TryDeserializeComma() {
+        if (!m_Comma)
+            return true;
+        return DeserializeComma();
     };
 
     protected bool DeserializeComma() {
-        if (!IsComma())
+        if (!m_Comma || !IsComma())
             return Error("expected comma");
         #ifndef ENABLE_DIAG
         Next();
@@ -855,6 +1011,7 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
         if (char != ",")
             return Error();
         #endif
+        m_Comma = false;
         return true;
     };
 
@@ -871,53 +1028,6 @@ class V30_JSON_TextDeserializer : V30_JSON_StreamDeserializer {
             return Error();
         #endif
         return true;
-    };
-
-
-
-    override bool ForEachArray(notnull V30_JSON_DeserializerArrayVisitor visitor) {
-        if (!BeginArrayDeserialization())
-            return false;
-        if (!visitor.OnBegin(this))
-            return false;
-        if (!IsArrayEnd()) {
-            if (!visitor.OnElement(this))
-                return false;
-            while (!IsArrayEnd()) {
-                if (!DeserializeComma())
-                    return false;
-                if (!visitor.OnElement(this))
-                    return false;
-            };
-        };
-        if (!EndArrayDeserialization())
-            return false;
-        return visitor.OnEnd(this);
-    };
-
-    override bool ForEachObject(notnull V30_JSON_DeserializerObjectVisitor visitor) {
-        if (!BeginObjectDeserialization())
-            return false;
-        if (!visitor.OnBegin(this))
-            return false;
-        if (!IsObjectEnd()) {
-            string key;
-            if (!DeserializeKey(key))
-                return false;
-            if (!visitor.OnElement(this, key))
-                return false;
-            while (!IsObjectEnd()) {
-                if (!DeserializeComma())
-                    return false;
-                if (!DeserializeKey(key))
-                    return false;
-                if (!visitor.OnElement(this, key))
-                    return false;
-            };
-        };
-        if (!EndObjectDeserialization())
-            return false;
-        return visitor.OnEnd(this);
     };
 
 

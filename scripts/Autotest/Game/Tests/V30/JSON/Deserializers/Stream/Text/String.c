@@ -35,6 +35,11 @@ class V30_JSON_TEST_StringDeserializerCase : V30_JSON_TEST_Case {
         };
         SetResult(SCR_AutotestResult.AsSuccess());
     };
+	
+	[Step(EStage.TearDown)]
+	void TearDown() {
+		m_Deserializer = null;
+	};
 
     string GetData();
 
@@ -499,5 +504,381 @@ class V30_JSON_TEST_StringDeserializerSuite_StringLocalized : V30_JSON_TEST_Stri
         return "привет";
     };
 };
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayEmpty : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArraySingleNumber : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[1]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        int intValue;
+        if (!deserializer.DeserializeInt(intValue) || intValue != 1)
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayMultipleNumbers : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[1,2,3]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        int value;
+        if (!deserializer.DeserializeInt(value) || value != 1)
+            return false;
+        if (!deserializer.DeserializeInt(value) || value != 2)
+            return false;
+        if (!deserializer.DeserializeInt(value) || value != 3)
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayMultipleNumbersSpaced : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[ 1 , 2 , 3 ]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        int value;
+        if (!deserializer.DeserializeInt(value) || value != 1)
+            return false;
+        if (!deserializer.DeserializeInt(value) || value != 2)
+            return false;
+        if (!deserializer.DeserializeInt(value) || value != 3)
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayMultipleStrings : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[\"a\",\"b\",\"c\"]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        string value;
+        if (!deserializer.DeserializeString(value) || value != "a")
+            return false;
+        if (!deserializer.DeserializeString(value) || value != "b")
+            return false;
+        if (!deserializer.DeserializeString(value) || value != "c")
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayMixedPrimitiveTypes : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[null,true,false,42,3.14,\"hello\"]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        if (!deserializer.DeserializeNull())
+            return false;
+        bool boolValue;
+        if (!deserializer.DeserializeBool(boolValue) || boolValue != true)
+            return false;
+        if (!deserializer.DeserializeBool(boolValue) || boolValue != false)
+            return false;
+        int intValue;
+        if (!deserializer.DeserializeInt(intValue) || intValue != 42)
+            return false;
+        float floatValue;
+        if (!deserializer.DeserializeFloat(floatValue) || floatValue != 3.14)
+            return false;
+        string stringValue;
+        if (!deserializer.DeserializeString(stringValue) || stringValue != "hello")
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayNested : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[[],[1],[1,2,3]]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        int value;
+        if (!deserializer.DeserializeInt(value) || value != 1)
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        if (!deserializer.DeserializeInt(value) || value != 1)
+            return false;
+        if (!deserializer.DeserializeInt(value) || value != 2)
+            return false;
+        if (!deserializer.DeserializeInt(value) || value != 3)
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayNestedDeep : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[[[[[]]]]]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayEscapedStrings : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[\"\\\"\",\"\\\\\",\"\\n\",\"\\t\"]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        string value;
+        if (!deserializer.DeserializeString(value) || value != "\"")
+            return false;
+        if (!deserializer.DeserializeString(value) || value != "\\")
+            return false;
+        if (!deserializer.DeserializeString(value) || value != "\n")
+            return false;
+        if (!deserializer.DeserializeString(value) || value != "\t")
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayUnicodeStrings : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[\"привет\",\"π\",\"你好\",\"😀\"]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        string value;
+        if (!deserializer.DeserializeString(value) || value != "привет")
+            return false;
+        if (!deserializer.DeserializeString(value) || value != "π")
+            return false;
+        if (!deserializer.DeserializeString(value) || value != "你好")
+            return false;
+        if (!deserializer.DeserializeString(value) || value != "😀")
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayLarge : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[1,2,3,4,5,6,7,8,9,10]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        int value;
+        for (int x = 1; x < 11; x++)
+            if (!deserializer.DeserializeInt(value) || value != x)
+                return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayVectorLike : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "[123.456, 456.789, 789.123]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        float value;
+        if (!deserializer.DeserializeFloat(value) || value != 123.456)
+            return false;
+        if (!deserializer.DeserializeFloat(value) || value != 456.789)
+            return false;
+        if (!deserializer.DeserializeFloat(value) || value != 789.123)
+            return false;
+        if (!deserializer.EndArrayDeserialization())
+            return false;
+        return true;
+    };
+};
+
+class V30_JSON_TEST_StringDeserializerFailureCase : V30_JSON_TEST_StringDeserializerCase {
+    [Step(EStage.Main)]
+    override void Execute() {
+        auto data = GetData();
+        if (!m_Deserializer.BeginDeserialization(data)) {
+            SetResult(SCR_AutotestResult.AsSuccess());
+            return;
+        };
+        if (!Deserialize(m_Deserializer)) {
+            SetResult(SCR_AutotestResult.AsSuccess());
+            return;
+        };
+        if (!m_Deserializer.EndDeserialization()) {
+            SetResult(SCR_AutotestResult.AsSuccess());
+            return;
+        };
+        SetResult(SCR_AutotestResult.AsFailure("Deserialization unexpectedly succeeded for: \"%1\"", data));
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ObjectMixedValues : V30_JSON_TEST_StringDeserializerCase {
+    override string GetData() {
+        return "{\"a\":1,\"b\":true,\"c\":[2,3]}";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        V30_JSON_Object value;
+        if (!deserializer.DeserializeObject(value))
+            return false;
+        if (AssertTrue(value.Count() == 3, string.Format("Object count %1 doesn't equal 3", value.Count())))
+            return false;
+        auto a = V30_JSON_Int.Cast(value.Get("a"));
+        if (AssertTrue(a && a.GetValue() == 1, "Object value 'a' doesn't equal 1"))
+            return false;
+        auto b = V30_JSON_Bool.Cast(value.Get("b"));
+        if (AssertTrue(b && b.GetValue(), "Object value 'b' doesn't equal true"))
+            return false;
+        auto c = V30_JSON_Array.Cast(value.Get("c"));
+        if (AssertTrue(c && c.Count() == 2, "Object value 'c' isn't array with 2 elements"))
+            return false;
+        return true;
+    };
+};
+
+/*
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayTrailingCommaFails : V30_JSON_TEST_StringDeserializerFailureCase {
+    override string GetData() {
+        return "[1,]";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        int value;
+        if (!deserializer.DeserializeInt(value) || value != 1)
+            return false;
+        return deserializer.DeserializeInt(value);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_ArrayObjectEndFails : V30_JSON_TEST_StringDeserializerFailureCase {
+    override string GetData() {
+        return "[1}";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        if (!deserializer.BeginArrayDeserialization())
+            return false;
+        int value;
+        if (!deserializer.DeserializeInt(value) || value != 1)
+            return false;
+        return deserializer.EndArrayDeserialization();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_StringDeserializerSuite)]
+class V30_JSON_TEST_StringDeserializerSuite_RootSecondValueFails : V30_JSON_TEST_StringDeserializerFailureCase {
+    override string GetData() {
+        return "null null";
+    };
+
+    override bool Deserialize(notnull V30_JSON_StringDeserializer deserializer) {
+        return deserializer.DeserializeNull();
+    };
+};
+*/
 
 #endif

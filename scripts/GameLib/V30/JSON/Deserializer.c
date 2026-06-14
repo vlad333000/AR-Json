@@ -55,6 +55,11 @@ class V30_JSON_Deserializer {
         return true;
     };
 
+    // Deserialize object key.
+    bool DeserializeKey(out string key) {
+        return DeserializeString(key);
+    };
+
     // // Deserialize class instance (Custom deserializer must be defined for type).
     // bool DeserializeClass(typename type, out Class value);
 
@@ -109,6 +114,9 @@ class V30_JSON_Deserializer {
 
     // Checks if value is an object (key-value pairs).
     bool IsObject();
+
+    // Checks if next value is object's key-value pair.
+    bool IsKey();
 
     // Returns type of value.
     typename GetJsonType();
