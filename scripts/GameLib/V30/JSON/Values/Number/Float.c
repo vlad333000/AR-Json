@@ -1,4 +1,4 @@
-//[V30_JSON_FloatSerializerAttribute()]
+[V30_JSON_FloatSerializerAttribute()]
 class V30_JSON_Float : V30_JSON_Number {
     protected float value;
 
@@ -17,7 +17,7 @@ class V30_JSON_Float : V30_JSON_Number {
 
 class V30_JSON_FloatSerializerAttribute : V30_JSON_StreamSerializerAttribute {
     override void StreamSerialize(notnull V30_JSON_StreamSerializer serializer, Class instance) {
-        serializer.Serialize(V30_JSON_Float.Cast(instance).GetValue());
+        serializer.SerializeFloat(V30_JSON_Float.Cast(instance).GetValue());
     };
 
     override void SerializeArray(notnull V30_JSON_Serializer serializer, notnull Managed arr) {

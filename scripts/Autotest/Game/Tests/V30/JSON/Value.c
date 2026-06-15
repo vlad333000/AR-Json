@@ -7,7 +7,7 @@ class V30_JSON_TEST_ValueSuite : V30_JSON_TEST_Suite {};
 class V30_JSON_TEST_Value_Null : V30_JSON_TEST_Case {
     [Step(EStage.Main)]
     void Execute() {
-        auto value = V30_JSON_Null.GetInstance();
+        auto value = new V30_JSON_Null();
         AssertTrue(!!value, "Failed to create `V30_JSON_Null`.");
         AssertTrue(value.IsInherited(Managed), "`V30_JSON_Null` isn't `Managed`.");
         AssertTrue(value.GetValue() == null, "`V30_JSON_Null` returns non-null value.");

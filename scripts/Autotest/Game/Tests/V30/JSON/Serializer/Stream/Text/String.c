@@ -41,7 +41,7 @@ class V30_JSON_TEST_StringSerializerCase : V30_JSON_TEST_Case {
 [Test(suite: V30_JSON_TEST_StringSerializerSuite)]
 class V30_JSON_TEST_StringSerializerSuite_Null : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
-        serializer.Serialize(null);
+        serializer.SerializeNull();
         return "null";
     };
 };
@@ -49,7 +49,7 @@ class V30_JSON_TEST_StringSerializerSuite_Null : V30_JSON_TEST_StringSerializerC
 [Test(suite: V30_JSON_TEST_StringSerializerSuite)]
 class V30_JSON_TEST_StringSerializerSuite_BoolTrue : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
-        serializer.Serialize(true);
+        serializer.SerializeBool(true);
         return "true";
     };
 };
@@ -57,7 +57,7 @@ class V30_JSON_TEST_StringSerializerSuite_BoolTrue : V30_JSON_TEST_StringSeriali
 [Test(suite: V30_JSON_TEST_StringSerializerSuite)]
 class V30_JSON_TEST_StringSerializerSuite_BoolFalse : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
-        serializer.Serialize(false);
+        serializer.SerializeBool(false);
         return "false";
     };
 };
@@ -65,7 +65,7 @@ class V30_JSON_TEST_StringSerializerSuite_BoolFalse : V30_JSON_TEST_StringSerial
 [Test(suite: V30_JSON_TEST_StringSerializerSuite)]
 class V30_JSON_TEST_StringSerializerSuite_Int : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
-        serializer.Serialize(42);
+        serializer.SerializeInt(42);
         return "42";
     };
 };
@@ -73,7 +73,7 @@ class V30_JSON_TEST_StringSerializerSuite_Int : V30_JSON_TEST_StringSerializerCa
 [Test(suite: V30_JSON_TEST_StringSerializerSuite)]
 class V30_JSON_TEST_StringSerializerSuite_Float : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
-        serializer.Serialize(3.14);
+        serializer.SerializeFloat(3.14);
         return "3.14";
     };
 };
@@ -81,7 +81,7 @@ class V30_JSON_TEST_StringSerializerSuite_Float : V30_JSON_TEST_StringSerializer
 [Test(suite: V30_JSON_TEST_StringSerializerSuite)]
 class V30_JSON_TEST_StringSerializerSuite_String : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
-        serializer.Serialize("Hello, World!");
+        serializer.SerializeString("Hello, World!");
         return "\"Hello, World!\"";
     };
 };
@@ -89,7 +89,7 @@ class V30_JSON_TEST_StringSerializerSuite_String : V30_JSON_TEST_StringSerialize
 [Test(suite: V30_JSON_TEST_StringSerializerSuite)]
 class V30_JSON_TEST_StringSerializerSuite_StringEscape : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
-        serializer.Serialize(string.Format("%1Escape sequences:%2%3%4%5%1", "\"", "\\", "\t", "\n", "\r"));
+        serializer.SerializeString(string.Format("%1Escape sequences:%2%3%4%5%1", "\"", "\\", "\t", "\n", "\r"));
         return string.Format("\"%1Escape sequences:%2%3%4%5%1\"", "\\"+"\"", "\\"+"\\", "\\"+"t", "\\"+"n", "\\"+"r");
     };
 };
@@ -107,11 +107,11 @@ class V30_JSON_TEST_StringSerializerSuite_EmptyArray : V30_JSON_TEST_StringSeria
 class V30_JSON_TEST_StringSerializerSuite_FilledArray : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
         serializer.BeginArraySerialization();
-            serializer.Serialize(null);
-            serializer.Serialize(true);
-            serializer.Serialize(42);
-            serializer.Serialize(3.14);
-            serializer.Serialize("Hello, World!");
+            serializer.SerializeNull();
+            serializer.SerializeBool(true);
+            serializer.SerializeInt(42);
+            serializer.SerializeFloat(3.14);
+            serializer.SerializeString("Hello, World!");
             serializer.BeginArraySerialization();
             serializer.EndArraySerialization();
             serializer.BeginObjectSerialization();
@@ -127,13 +127,13 @@ class V30_JSON_TEST_StringSerializerSuite_MultiDimensionalArray : V30_JSON_TEST_
         serializer.BeginArraySerialization();
             serializer.BeginArraySerialization();
                 serializer.BeginArraySerialization();
-                    serializer.Serialize(null);
-                    serializer.Serialize(true);
+                    serializer.SerializeNull();
+                    serializer.SerializeBool(true);
                 serializer.EndArraySerialization();
                 serializer.BeginArraySerialization();
-                    serializer.Serialize(42);
-                    serializer.Serialize(3.14);
-                    serializer.Serialize("Hello, World!");
+                    serializer.SerializeInt(42);
+                    serializer.SerializeFloat(3.14);
+                    serializer.SerializeString("Hello, World!");
                 serializer.EndArraySerialization();
                 serializer.BeginArraySerialization();
                 	serializer.BeginArraySerialization();
@@ -160,14 +160,21 @@ class V30_JSON_TEST_StringSerializerSuite_EmptyObject : V30_JSON_TEST_StringSeri
 class V30_JSON_TEST_StringSerializerSuite_FilledObject : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
         serializer.BeginObjectSerialization();
-            serializer.Serialize("n", null);
-            serializer.Serialize("b", true);
-            serializer.Serialize("i", 42);
-            serializer.Serialize("f", 3.14);
-            serializer.Serialize("s", "Hello, World!");
-            serializer.BeginArraySerialization("a");
+            serializer.SerializeKey("n");
+            serializer.SerializeNull();
+            serializer.SerializeKey("b");
+            serializer.SerializeBool(true);
+            serializer.SerializeKey("i");
+            serializer.SerializeInt(42);
+            serializer.SerializeKey("f");
+            serializer.SerializeFloat(3.14);
+            serializer.SerializeKey("s");
+            serializer.SerializeString("Hello, World!");
+            serializer.SerializeKey("a");
+            serializer.BeginArraySerialization();
             serializer.EndArraySerialization();
-            serializer.BeginObjectSerialization("o");
+            serializer.SerializeKey("o");
+            serializer.BeginObjectSerialization();
             serializer.EndObjectSerialization();
         serializer.EndObjectSerialization();
         return "{\"n\":null,\"b\":true,\"i\":42,\"f\":3.14,\"s\":\"Hello, World!\",\"a\":[],\"o\":{}}";
@@ -178,21 +185,32 @@ class V30_JSON_TEST_StringSerializerSuite_FilledObject : V30_JSON_TEST_StringSer
 class V30_JSON_TEST_StringSerializerSuite_MultiDimensionalObject : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
         serializer.BeginObjectSerialization();
-            serializer.BeginObjectSerialization("141");
-                serializer.BeginObjectSerialization("Apple");
-                    serializer.Serialize("n", null);
-                    serializer.Serialize("b", true);
+            serializer.SerializeKey("141");
+            serializer.BeginObjectSerialization();
+                serializer.SerializeKey("Apple");
+                serializer.BeginObjectSerialization();
+                    serializer.SerializeKey("n");
+                    serializer.SerializeNull();
+                    serializer.SerializeKey("b");
+                    serializer.SerializeBool(true);
                 serializer.EndObjectSerialization();
-                serializer.BeginObjectSerialization("Banana");
-                    serializer.Serialize("i", 42);
-                    serializer.Serialize("f", 3.14);
-                    serializer.Serialize("s", "Hello, World!");
+                serializer.SerializeKey("Banana");
+                serializer.BeginObjectSerialization();
+                    serializer.SerializeKey("i");
+                    serializer.SerializeInt(42);
+                    serializer.SerializeKey("f");
+                    serializer.SerializeFloat(3.14);
+                    serializer.SerializeKey("s");
+                    serializer.SerializeString("Hello, World!");
                 serializer.EndObjectSerialization();
-                serializer.BeginObjectSerialization("Orange");
-                    serializer.BeginArraySerialization("a");
+                serializer.SerializeKey("Orange");
+                serializer.BeginObjectSerialization();
+                    serializer.SerializeKey("a");
+                    serializer.BeginArraySerialization();
                     serializer.EndArraySerialization();
                 serializer.EndObjectSerialization();
-                serializer.BeginObjectSerialization("o");
+                serializer.SerializeKey("o");
+                serializer.BeginObjectSerialization();
                 serializer.EndObjectSerialization();
             serializer.EndObjectSerialization();
         serializer.EndObjectSerialization();
@@ -204,26 +222,35 @@ class V30_JSON_TEST_StringSerializerSuite_MultiDimensionalObject : V30_JSON_TEST
 class V30_JSON_TEST_StringSerializerSuite_MixedArrayObject : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
         serializer.BeginObjectSerialization();
-            serializer.BeginArraySerialization("Banana");
-                serializer.Serialize(null);
-                serializer.Serialize(true);
+            serializer.SerializeKey("Banana");
+            serializer.BeginArraySerialization();
+                serializer.SerializeNull();
+                serializer.SerializeBool(true);
             serializer.EndArraySerialization();
-            serializer.BeginObjectSerialization("Apple");
-                serializer.Serialize("i", 42);
-                serializer.Serialize("f", 3.14);
+            serializer.SerializeKey("Apple");
+            serializer.BeginObjectSerialization();
+                serializer.SerializeKey("i");
+                serializer.SerializeInt(42);
+                serializer.SerializeKey("f");
+                serializer.SerializeFloat(3.14);
             serializer.EndObjectSerialization();
-            serializer.BeginArraySerialization("Orange");
+            serializer.SerializeKey("Orange");
+            serializer.BeginArraySerialization();
                 serializer.BeginArraySerialization();
-                    serializer.Serialize("Hello, World!");
+                    serializer.SerializeString("Hello, World!");
                 serializer.EndArraySerialization();
             serializer.EndArraySerialization();
-            serializer.BeginObjectSerialization("Pear");
-                serializer.BeginArraySerialization("Test");
+            serializer.SerializeKey("Pear");
+            serializer.BeginObjectSerialization();
+                serializer.SerializeKey("Test");
+                serializer.BeginArraySerialization();
                 serializer.EndArraySerialization();
             serializer.EndObjectSerialization();
-            serializer.BeginArraySerialization("a");
+            serializer.SerializeKey("a");
+            serializer.BeginArraySerialization();
             serializer.EndArraySerialization();
-            serializer.BeginObjectSerialization("o");
+            serializer.SerializeKey("o");
+            serializer.BeginObjectSerialization();
             serializer.EndObjectSerialization();
         serializer.EndObjectSerialization();
         return "{\"Banana\":[null,true],\"Apple\":{\"i\":42,\"f\":3.14},\"Orange\":[[\"Hello, World!\"]],\"Pear\":{\"Test\":[]},\"a\":[],\"o\":{}}";
@@ -235,7 +262,7 @@ class V30_JSON_TEST_StringSerializerSuite_MixedArrayObject : V30_JSON_TEST_Strin
 [Test(suite: V30_JSON_TEST_StringSerializerSuite)]
 class V30_JSON_TEST_StringSerializerSuite_JsonNull : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
-        auto value = V30_JSON_Null.GetInstance();
+        auto value = new V30_JSON_Null();
         serializer.Serialize(value);
         return "null";
     };
@@ -281,7 +308,7 @@ class V30_JSON_TEST_StringSerializerSuite_JsonString : V30_JSON_TEST_StringSeria
 class V30_JSON_TEST_StringSerializerSuite_JsonArray : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
         auto value = new V30_JSON_Array();
-        value.Insert(V30_JSON_Null.GetInstance());
+        value.Insert(new V30_JSON_Null());
         value.Insert(new V30_JSON_Bool(true));
         value.Insert(new V30_JSON_Int(42));
         value.Insert(new V30_JSON_Float(3.14));
@@ -297,7 +324,7 @@ class V30_JSON_TEST_StringSerializerSuite_JsonArray : V30_JSON_TEST_StringSerial
 class V30_JSON_TEST_StringSerializerSuite_JsonObject : V30_JSON_TEST_StringSerializerCase {
     override string Serialize() {
         auto value = new V30_JSON_Object();
-        value.Insert("n", V30_JSON_Null.GetInstance());
+        value.Insert("n", new V30_JSON_Null());
         value.Insert("b", new V30_JSON_Bool(true));
         value.Insert("i", new V30_JSON_Int(42));
         value.Insert("f", new V30_JSON_Float(3.14));

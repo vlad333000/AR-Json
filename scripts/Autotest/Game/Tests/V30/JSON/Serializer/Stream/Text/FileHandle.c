@@ -101,7 +101,7 @@ class V30_JSON_TEST_FileHandleSerializerCase : V30_JSON_TEST_Case {
 [Test(suite: V30_JSON_TEST_FileHandleSerializerSuite)]
 class V30_JSON_TEST_FileHandleSerializerSuite_Null : V30_JSON_TEST_FileHandleSerializerCase {
     override void Serialize(notnull V30_JSON_FileHandleSerializer serializer) {
-        serializer.Serialize(null);
+        serializer.SerializeNull();
     };
 
     override string GetExpected() {
@@ -112,7 +112,7 @@ class V30_JSON_TEST_FileHandleSerializerSuite_Null : V30_JSON_TEST_FileHandleSer
 [Test(suite: V30_JSON_TEST_FileHandleSerializerSuite)]
 class V30_JSON_TEST_FileHandleSerializerSuite_Bool : V30_JSON_TEST_FileHandleSerializerCase {
     override void Serialize(notnull V30_JSON_FileHandleSerializer serializer) {
-        serializer.Serialize(false);
+        serializer.SerializeBool(false);
     };
 
     override string GetExpected() {
@@ -123,7 +123,7 @@ class V30_JSON_TEST_FileHandleSerializerSuite_Bool : V30_JSON_TEST_FileHandleSer
 [Test(suite: V30_JSON_TEST_FileHandleSerializerSuite)]
 class V30_JSON_TEST_FileHandleSerializerSuite_Int : V30_JSON_TEST_FileHandleSerializerCase {
     override void Serialize(notnull V30_JSON_FileHandleSerializer serializer) {
-        serializer.Serialize(42);
+        serializer.SerializeInt(42);
     };
 
     override string GetExpected() {
@@ -134,7 +134,7 @@ class V30_JSON_TEST_FileHandleSerializerSuite_Int : V30_JSON_TEST_FileHandleSeri
 [Test(suite: V30_JSON_TEST_FileHandleSerializerSuite)]
 class V30_JSON_TEST_FileHandleSerializerSuite_Float : V30_JSON_TEST_FileHandleSerializerCase {
     override void Serialize(notnull V30_JSON_FileHandleSerializer serializer) {
-        serializer.Serialize(-1.25);
+        serializer.SerializeFloat(-1.25);
     };
 
     override string GetExpected() {
@@ -145,7 +145,7 @@ class V30_JSON_TEST_FileHandleSerializerSuite_Float : V30_JSON_TEST_FileHandleSe
 [Test(suite: V30_JSON_TEST_FileHandleSerializerSuite)]
 class V30_JSON_TEST_FileHandleSerializerSuite_StringEscapes : V30_JSON_TEST_FileHandleSerializerCase {
     override void Serialize(notnull V30_JSON_FileHandleSerializer serializer) {
-        serializer.Serialize(string.Format("hello%1world", "\n"));
+        serializer.SerializeString("hello\nworld");
     };
 
     override string GetExpected() {
@@ -157,9 +157,9 @@ class V30_JSON_TEST_FileHandleSerializerSuite_StringEscapes : V30_JSON_TEST_File
 class V30_JSON_TEST_FileHandleSerializerSuite_ArrayManual : V30_JSON_TEST_FileHandleSerializerCase {
     override void Serialize(notnull V30_JSON_FileHandleSerializer serializer) {
         serializer.BeginArraySerialization();
-            serializer.Serialize(1);
-            serializer.Serialize(2);
-            serializer.Serialize(3);
+            serializer.SerializeInt(1);
+            serializer.SerializeInt(2);
+            serializer.SerializeInt(3);
         serializer.EndArraySerialization();
     };
 
@@ -172,11 +172,14 @@ class V30_JSON_TEST_FileHandleSerializerSuite_ArrayManual : V30_JSON_TEST_FileHa
 class V30_JSON_TEST_FileHandleSerializerSuite_Object : V30_JSON_TEST_FileHandleSerializerCase {
     override void Serialize(notnull V30_JSON_FileHandleSerializer serializer) {
         serializer.BeginObjectSerialization();
-            serializer.Serialize("a", 1);
-            serializer.Serialize("b", true);
-            serializer.BeginArraySerialization("c");
-                serializer.Serialize(2);
-                serializer.Serialize(3);
+            serializer.SerializeKey("a");
+            serializer.SerializeInt(1);
+            serializer.SerializeKey("b");
+            serializer.SerializeBool(true);
+            serializer.SerializeKey("c");
+            serializer.BeginArraySerialization();
+                serializer.SerializeInt(2);
+                serializer.SerializeInt(3);
             serializer.EndArraySerialization();
         serializer.EndObjectSerialization();
     };
@@ -194,7 +197,8 @@ class V30_JSON_TEST_FileHandleSerializerSuite_Offset : V30_JSON_TEST_FileHandleS
 
     override void Serialize(notnull V30_JSON_FileHandleSerializer serializer) {
         serializer.BeginObjectSerialization();
-            serializer.Serialize("a", 1);
+            serializer.SerializeKey("a");
+            serializer.SerializeInt(1);
         serializer.EndObjectSerialization();
     };
 
@@ -207,7 +211,7 @@ class V30_JSON_TEST_FileHandleSerializerSuite_Offset : V30_JSON_TEST_FileHandleS
 class V30_JSON_TEST_FileHandleSerializerSuite_Visit : V30_JSON_TEST_FileHandleSerializerCase {
     override void Serialize(notnull V30_JSON_FileHandleSerializer serializer) {
         auto value = new V30_JSON_Object();
-        value.Insert("n", V30_JSON_Null.GetInstance());
+        value.Insert("n", new V30_JSON_Null());
         value.Insert("s", new V30_JSON_String("hello"));
 
         auto arrayValue = new V30_JSON_Array();

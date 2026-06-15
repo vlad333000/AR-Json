@@ -1,4 +1,4 @@
-//[V30_JSON_ArraySerializerAttribute()]
+[V30_JSON_ArraySerializerAttribute()]
 class V30_JSON_Array : V30_JSON_Container {
     protected ref array<ref V30_JSON_Value> m_Value;
 

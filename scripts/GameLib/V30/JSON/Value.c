@@ -51,9 +51,9 @@ class V30_JSON_ValueHelper {
 
     static V30_JSON_Value New(Class value) {
         if (!value)
-            return V30_JSON_Null.GetInstance();
+            return new V30_JSON_Null();
         auto serializer = new V30_JSON_ValueSerializer();
-        serializer.Serialize(value);
+        serializer.SerializeClass(value);
         return serializer.GetValue();
     };
 };

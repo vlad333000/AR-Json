@@ -19,26 +19,26 @@ class V30_JSON_ValueSerializer : V30_JSON_StreamSerializer {
 
 
     override void SerializeNull() {
-        auto json = V30_JSON_Null.GetInstance();
+        auto json = new V30_JSON_Null();
         PutJson(json);
     };
 
-    override void Serialize(bool value) {
+    override void SerializeBool(bool value) {
         auto json = new V30_JSON_Bool(value);
         PutJson(json);
     };
 
-    override void Serialize(int value) {
+    override void SerializeInt(int value) {
         auto json = new V30_JSON_Int(value);
         PutJson(json);
     };
 
-    override void Serialize(float value) {
+    override void SerializeFloat(float value) {
         auto json = new V30_JSON_Float(value);
         PutJson(json);
     };
 
-    override void Serialize(string value) {
+    override void SerializeString(string value) {
         auto json = new V30_JSON_String(value);
         PutJson(json);
     };

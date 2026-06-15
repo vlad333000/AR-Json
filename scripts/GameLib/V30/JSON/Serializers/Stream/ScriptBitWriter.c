@@ -19,22 +19,22 @@ class V30_JSON_ScriptBitWriterSerializer : V30_JSON_StreamSerializer {
         WriteType(V30_JSON_ScriptBitWriterSerializer_Value.Null);
     };
 
-    override void Serialize(bool value) {
+    override void SerializeBool(bool value) {
         WriteType(V30_JSON_ScriptBitWriterSerializer_Value.Bool);
         writer.WriteBool(value);
     };
 
-    override void Serialize(int value) {
+    override void SerializeInt(int value) {
         WriteType(V30_JSON_ScriptBitWriterSerializer_Value.Int);
         writer.WriteInt(value);
     };
 
-    override void Serialize(float value) {
+    override void SerializeFloat(float value) {
         WriteType(V30_JSON_ScriptBitWriterSerializer_Value.Float);
         writer.WriteFloat(value);
     };
 
-    override void Serialize(string value) {
+    override void SerializeString(string value) {
         WriteType(V30_JSON_ScriptBitWriterSerializer_Value.String);
         writer.WriteString(value);
     };

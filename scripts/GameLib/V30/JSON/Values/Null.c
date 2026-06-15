@@ -1,8 +1,8 @@
-//[V30_JSON_NullSerializerAttribute()]
+[V30_JSON_NullSerializerAttribute()]
 class V30_JSON_Null : V30_JSON_Value {
     protected static ref V30_JSON_Null s_Instance = new V30_JSON_Null();
 
-    protected void V30_JSON_Null();
+    void V30_JSON_Null();
 
     Class GetValue() {
         return null;

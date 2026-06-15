@@ -5,30 +5,30 @@ class V30_JSON_TextSerializer : V30_JSON_StreamSerializer {
 
 
 
-    override protected void SerializeNull() {
+    override void SerializeNull() {
 		TryWriteComma();
         Write("null");
     };
 
-    override void Serialize(bool value) {
+    override void SerializeBool(bool value) {
 		TryWriteComma();
         auto data = value.ToString(false);
         Write(data);
     };
 
-    override void Serialize(int value) {
+    override void SerializeInt(int value) {
 		TryWriteComma();
         auto data = value.ToString();
         Write(data);
     };
 
-    override void Serialize(float value) {
+    override void SerializeFloat(float value) {
 		TryWriteComma();
         auto data = value.ToString();
         Write(data);
     };
 
-    override void Serialize(string value) {
+    override void SerializeString(string value) {
 		TryWriteComma();
         Write("\"");
 		auto n = value.Length();
@@ -149,7 +149,7 @@ class V30_JSON_TextSerializer : V30_JSON_StreamSerializer {
 	override void SerializeKey(string key) {
 		TryWriteComma();
 		isCommaNeeded = false; // Prevent string serialization to put comma.
-		Serialize(key);
+		SerializeString(key);
 		WriteColon();
 		isCommaNeeded = false; // Prevent any value serialization to put comma (After any value is serialized, this will automatically set to `true` inside `TryWriteComma` that exists at the beginning of any value serialization).
 	};

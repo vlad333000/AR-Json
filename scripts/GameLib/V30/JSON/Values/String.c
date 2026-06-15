@@ -1,4 +1,4 @@
-//[V30_JSON_StringSerializerAttribute()]
+[V30_JSON_StringSerializerAttribute()]
 class V30_JSON_String : V30_JSON_Value {
     protected string m_Value;
 
@@ -21,7 +21,7 @@ class V30_JSON_String : V30_JSON_Value {
 
 class V30_JSON_StringSerializerAttribute : V30_JSON_StreamSerializerAttribute {
     override void StreamSerialize(notnull V30_JSON_StreamSerializer serializer, Class instance) {
-        serializer.Serialize(V30_JSON_String.Cast(instance).GetValue());
+        serializer.SerializeString(V30_JSON_String.Cast(instance).GetValue());
     };
 
     override void SerializeArray(notnull V30_JSON_Serializer serializer, notnull Managed arr) {

@@ -1,4 +1,4 @@
-//[V30_JSON_BoolSerializerAttribute()]
+[V30_JSON_BoolSerializerAttribute()]
 class V30_JSON_Bool : V30_JSON_Value {
     protected bool m_Value;
 
@@ -17,7 +17,7 @@ class V30_JSON_Bool : V30_JSON_Value {
 
 class V30_JSON_BoolSerializerAttribute : V30_JSON_StreamSerializerAttribute {
     override void StreamSerialize(notnull V30_JSON_StreamSerializer serializer, Class instance) {
-        serializer.Serialize(V30_JSON_Bool.Cast(instance).GetValue());
+        serializer.SerializeBool(V30_JSON_Bool.Cast(instance).GetValue());
     };
 
     override void SerializeArray(notnull V30_JSON_Serializer serializer, notnull Managed arr) {
