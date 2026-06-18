@@ -95,7 +95,8 @@ class V30_JSON_DefaultSerializerAttribute_Helper {
         Class value;
         instanceType.GetVariableValue(instance, i, value);
         auto key = instanceType.GetVariableName(i);
-        V30_JSON_SerializerHelper.SerializePair(serializer, key, value);
+		serializer.SerializeKey(key);
+        V30_JSON_SerializerHelper.Serialize(serializer, value);
     };
 };
 
@@ -107,6 +108,7 @@ class V30_JSON_DefaultSerializerAttribute_HelperT<Class T> {
         T value;
         instanceType.GetVariableValue(instance, i, value);
         auto key = instanceType.GetVariableName(i);
-        V30_JSON_SerializerHelper.SerializePair(serializer, key, value);
+		serializer.SerializeKey(key);
+        V30_JSON_SerializerHelper.Serialize(serializer, value);
     };
 };

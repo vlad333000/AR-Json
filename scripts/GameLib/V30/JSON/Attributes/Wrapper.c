@@ -7,28 +7,20 @@ class V30_JSON_WrapperSerializerAttribute : V30_JSON_SerializerAttribute {
 
 class V30_JSON_WrapperSerializerAttributeHelperT<Class T> {
 	static void SerializeArray(notnull V30_JSON_Serializer serializer, notnull Managed arr, notnull V30_JSON_WrapperSerializerAttribute arrSerializer) {
-		foreach (auto element : array<T>.Cast(arr))
-			arrSerializer.Serialize(serializer, element);
+		V30_JSON_SerializerHelperT<T>.SerializeArray(serializer, array<T>.Cast(arr));
 	};
-	
+
 	static void SerializeObject(notnull V30_JSON_Serializer serializer, notnull Managed obj, notnull V30_JSON_WrapperSerializerAttribute objSerializer) {
-		foreach (auto key, auto element : map<string, T>.Cast(obj)) {
-			serializer.SerializeKey(key);
-			objSerializer.Serialize(serializer, element);
-		};
+		V30_JSON_SerializerHelperT<T>.SerializeObject(serializer, map<string, T>.Cast(obj));
 	};
 };
 
 class V30_JSON_WrapperSerializerAttributeHelperRefT<Class T> {
 	static void SerializeArray(notnull V30_JSON_Serializer serializer, notnull Managed arr, notnull V30_JSON_WrapperSerializerAttribute arrSerializer) {
-		foreach (auto element : array<ref T>.Cast(arr))
-			arrSerializer.Serialize(serializer, element);
+		V30_JSON_SerializerHelperRefT<T>.SerializeArray(serializer, array<ref T>.Cast(arr));
 	};
-	
+
 	static void SerializeObject(notnull V30_JSON_Serializer serializer, notnull Managed obj, notnull V30_JSON_WrapperSerializerAttribute objSerializer) {
-		foreach (auto key, auto element : map<string, ref T>.Cast(obj)) {
-			serializer.SerializeKey(key);
-			objSerializer.Serialize(serializer, element);
-		};
+		V30_JSON_SerializerHelperRefT<T>.SerializeObject(serializer, map<string, ref T>.Cast(obj));
 	};
 };

@@ -63,8 +63,10 @@ class V30_JSON_Object : V30_JSON_Container {
 class V30_JSON_ObjectSerializerAttribute : V30_JSON_StreamSerializerAttribute {
     override void StreamSerialize(notnull V30_JSON_StreamSerializer serializer, Class instance) {
         serializer.BeginObjectSerialization();
-            foreach (auto key, auto value : V30_JSON_Object.Cast(instance).GetValue())
-                V30_JSON_SerializerHelper.SerializePair(serializer, key, value);
+            foreach (auto key, auto value : V30_JSON_Object.Cast(instance).GetValue()) {
+				serializer.SerializeKey(key);
+		        serializer.Serialize(value);
+			};
         serializer.EndObjectSerialization();
     };
 
