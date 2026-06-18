@@ -47,6 +47,27 @@ class V30_JSON_Array : V30_JSON_Container {
         m_Value = newValue;
     };
 
+    override bool IsEqualTo(V30_JSON_Value other) {
+        return IsEqualTo(V30_JSON_Array.Cast(other));
+    };
+
+    bool IsEqualTo(V30_JSON_Array other) {
+        if (this == other)
+            return true;
+        if (!other)
+            return false;
+        if (m_Value.Count() != other.m_Value.Count())
+            return false;
+        foreach (auto i, auto value : m_Value) {
+            V30_JSON_Value otherValue = other.m_Value.Get(i);
+            if (value && !value.IsEqualTo(otherValue))
+                return false;
+            if (!value && !!otherValue)
+                return false;
+        };
+        return true;
+    };
+
     override string DebugString() {
         auto s = "[";
         foreach (auto i, auto v : m_Value) {

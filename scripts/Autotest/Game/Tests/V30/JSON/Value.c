@@ -105,4 +105,410 @@ class V30_JSON_TEST_Value_Object : V30_JSON_TEST_Case {
     };
 };
 
+class V30_JSON_TEST_Equals_Case : V30_JSON_TEST_Case {
+    [Step(EStage.Main)]
+    void Execute() {
+        auto a = GetLeft();
+        auto b = GetRight();
+        auto r = IsEquals();
+        if (r)
+            AssertTrue(a && a.IsEqualTo(b) || b && b.IsEqualTo(a) || !a == !b, string.Format("%1 == %2 returns false\n\t%3 == %4", Stringify(a), Stringify(b), a, b));
+        else
+            AssertTrue(a && !a.IsEqualTo(b) || b && !b.IsEqualTo(a) || !a != !b, string.Format("%1 != %2 returns false\n\t%3 == %4", Stringify(a), Stringify(b), a, b));
+		SetResult(SCR_AutotestResult.AsSuccess());
+    };
+
+    protected string Stringify(V30_JSON_Value value) {
+        if (!value)
+            return "NULL";
+        return value.DebugString();
+    };
+
+    V30_JSON_Value GetLeft();
+
+    V30_JSON_Value GetRight();
+
+    bool IsEquals() {
+        return true;
+    };
+};
+
+class V30_JSON_TEST_NotEquals_Case : V30_JSON_TEST_Equals_Case {
+    override bool IsEquals() {
+        return false;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Base1 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return null;
+    };
+    override V30_JSON_Value GetRight() {
+        return null;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Base2 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Int(42);
+    };
+    override V30_JSON_Value GetRight() {
+        return null;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Base3 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return null;
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Int(42);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Base4 : V30_JSON_TEST_Equals_Case {
+    protected ref V30_JSON_Int m_Value = new V30_JSON_Int(42);
+
+    override V30_JSON_Value GetLeft() {
+        return m_Value;
+    };
+    override V30_JSON_Value GetRight() {
+        return m_Value;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Null1 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return V30_JSON_Null.GetInstance();
+    };
+    override V30_JSON_Value GetRight() {
+        return V30_JSON_Null.GetInstance();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Null2 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Null();
+    };
+    override V30_JSON_Value GetRight() {
+        return V30_JSON_Null.GetInstance();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Null3 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return V30_JSON_Null.GetInstance();
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Null();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Null4 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Null();
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Null();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Null5 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Null();
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Int(42);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Bool1 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Bool();
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Bool();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Bool2 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Bool(true);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Bool(true);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Bool3 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Bool(false);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Bool(true);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Bool4 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Bool(true);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Bool(false);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Bool5 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Bool(true);
+    };
+    override V30_JSON_Value GetRight() {
+        return null;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Bool6 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Bool(true);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Null();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Bool7 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Bool(true);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Int(42);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Int1 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Int();
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Int();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Int2 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Int(42);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Int(42);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Int3 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Int(69);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Int(42);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Int4 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Int(42);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Int(69);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Int5 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Int(42);
+    };
+    override V30_JSON_Value GetRight() {
+        return null;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Int6 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Int(42);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Null();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Int7 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Int(42);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Bool(true);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Float1 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Float();
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Float();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Float2 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Float(3.14);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Float(3.14);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Float3 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Float(3.14);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Float(1.41);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Float4 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Float(1.41);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Float(3.14);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Float5 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Float(3.14);
+    };
+    override V30_JSON_Value GetRight() {
+        return null;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Float6 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Float(3.14);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Null();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_Float7 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_Float(3.14);
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Int(42);
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_String1 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_String();
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_String();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_String2 : V30_JSON_TEST_Equals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_String("Apple");
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_String("Apple");
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_String3 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_String("Apple");
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_String("Orange");
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_String4 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_String("Orange");
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_String("Apple");
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_String5 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_String("Apple");
+    };
+    override V30_JSON_Value GetRight() {
+        return null;
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_String6 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_String("Apple");
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Null();
+    };
+};
+
+[Test(suite: V30_JSON_TEST_ValueSuite)]
+class V30_JSON_TEST_Value_Equals_String7 : V30_JSON_TEST_NotEquals_Case {
+    override V30_JSON_Value GetLeft() {
+        return new V30_JSON_String("Apple");
+    };
+    override V30_JSON_Value GetRight() {
+        return new V30_JSON_Int(42);
+    };
+};
+
 #endif // WORKBENCH

@@ -14,6 +14,14 @@ class V30_JSON_Float : V30_JSON_Number {
         value = newValue;
     };
 
+    override bool IsEqualTo(V30_JSON_Value other) {
+        return IsEqualTo(V30_JSON_Float.Cast(other));
+    };
+
+    bool IsEqualTo(V30_JSON_Float other) {
+        return this == other || (other && value == other.value);
+    };
+
     override string DebugString() {
         return value.ToString();
     };

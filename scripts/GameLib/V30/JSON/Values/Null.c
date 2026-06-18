@@ -12,6 +12,14 @@ class V30_JSON_Null : V30_JSON_Value {
         return s_Instance;
     };
 
+    override bool IsEqualTo(V30_JSON_Value other) {
+        return IsEqualTo(V30_JSON_Null.Cast(other));
+    };
+
+    bool IsEqualTo(V30_JSON_Null other) {
+        return !!other;
+    };
+
     override string DebugString() {
         return "null";
     };

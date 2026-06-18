@@ -2,6 +2,8 @@
 class V30_JSON_Value : Managed {
     protected void V30_JSON_Value();
 
+    bool IsEqualTo(V30_JSON_Value other);
+
     string DebugString();
 };
 

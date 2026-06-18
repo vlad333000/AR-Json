@@ -18,6 +18,14 @@ class V30_JSON_String : V30_JSON_Value {
         m_Value = newValue;
     };
 
+    override bool IsEqualTo(V30_JSON_Value other) {
+        return IsEqualTo(V30_JSON_String.Cast(other));
+    };
+
+    bool IsEqualTo(V30_JSON_String other) {
+        return this == other || (other && m_Value == other.m_Value);
+    };
+
     override string DebugString() {
         if (m_Value.Length() < 256)
             return "\"" + m_Value + "\"";
