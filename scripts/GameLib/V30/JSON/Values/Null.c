@@ -11,6 +11,10 @@ class V30_JSON_Null : V30_JSON_Value {
     static V30_JSON_Null GetInstance() {
         return s_Instance;
     };
+
+    override string DebugString() {
+        return "null";
+    };
 };
 
 class V30_JSON_NullSerializerAttribute : V30_JSON_StreamSerializerAttribute {

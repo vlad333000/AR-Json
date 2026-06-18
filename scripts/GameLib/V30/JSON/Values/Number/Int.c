@@ -13,6 +13,10 @@ class V30_JSON_Int : V30_JSON_Number {
     void SetValue(int newValue) {
         value = newValue;
     };
+
+    override string DebugString() {
+        return value.ToString();
+    };
 };
 
 class V30_JSON_IntSerializerAttribute : V30_JSON_StreamSerializerAttribute {

@@ -46,6 +46,17 @@ class V30_JSON_Array : V30_JSON_Container {
     void SetValue(array<ref V30_JSON_Value> newValue) {
         m_Value = newValue;
     };
+
+    override string DebugString() {
+        auto s = "[";
+        foreach (auto i, auto v : m_Value) {
+            if (i > 0)
+                s += ", ";
+            s += v.DebugString();
+        };
+        s += "]";
+        return s;
+    };
 };
 
 class V30_JSON_ArraySerializerAttribute : V30_JSON_StreamSerializerAttribute {

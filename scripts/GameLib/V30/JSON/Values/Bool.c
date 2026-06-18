@@ -13,6 +13,10 @@ class V30_JSON_Bool : V30_JSON_Value {
     void SetValue(bool newValue) {
         m_Value = newValue;
     };
+
+    override string DebugString() {
+        return m_Value.ToString();
+    };
 };
 
 class V30_JSON_BoolSerializerAttribute : V30_JSON_StreamSerializerAttribute {

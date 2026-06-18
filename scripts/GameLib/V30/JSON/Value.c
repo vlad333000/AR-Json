@@ -1,6 +1,8 @@
 //[V30_JSON_ValueSerializerAttribute()]
 class V30_JSON_Value : Managed {
     protected void V30_JSON_Value();
+
+    string DebugString();
 };
 
 class V30_JSON_ValueSerializerAttribute : V30_JSON_WrapperSerializerAttribute {

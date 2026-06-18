@@ -17,6 +17,13 @@ class V30_JSON_String : V30_JSON_Value {
     void SetValue(string newValue) {
         m_Value = newValue;
     };
+
+    override string DebugString() {
+        if (m_Value.Length() < 256)
+            return "\"" + m_Value + "\"";
+        else
+            return "\"" + m_Value.Substring(0, 254) + "...";
+    };
 };
 
 class V30_JSON_StringSerializerAttribute : V30_JSON_StreamSerializerAttribute {

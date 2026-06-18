@@ -58,6 +58,24 @@ class V30_JSON_Object : V30_JSON_Container {
     void SetValue(map<string, ref V30_JSON_Value> newValue) {
 		m_Value = newValue;
 	};
+
+    override string DebugString() {
+        auto s = "{";
+        auto f = false;
+        foreach (auto k, auto v : m_Value) {
+            if (!f) {
+                k += ", ";
+                f = true;
+            };
+            if (k.Length() < 32)
+                s += "\"" + k + "\": ";
+            else
+                s += "\"" + k.Substring(0, 30) + "...: ";
+            s += v.DebugString();
+        };
+        s += "}";
+        return s;
+    };
 };
 
 class V30_JSON_ObjectSerializerAttribute : V30_JSON_StreamSerializerAttribute {
