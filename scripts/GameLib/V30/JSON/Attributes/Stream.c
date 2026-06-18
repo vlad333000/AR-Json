@@ -12,4 +12,13 @@ class V30_JSON_StreamSerializerAttribute : V30_JSON_SerializerAttribute {
         };
         StreamSerialize(streamSerializer, instance);
     };
+
+    /*modded*/ void StreamDeserialize(out Class instance, notnull V30_JSON_StreamDeserializer deserializer);
+
+	override void Deserialize(out Class instance, notnull V30_JSON_Deserializer deserializer) {
+		auto streamDeserializer = V30_JSON_StreamDeserializer.Cast(deserializer);
+		if (!streamDeserializer)
+			Debug.Error("TODO: need V30_JSON_ValueDeserializer");
+		StreamDeserialize(instance, streamDeserializer);
+	};
 };
